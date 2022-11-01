@@ -9,9 +9,11 @@ import WalletConnect from "@walletconnect/web3-provider";
 // @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
-import { Web3Auth } from "@web3auth/web3auth";
+// import { Web3Auth } from "@web3auth/web3auth";
 // @ts-ignore
 import MewConnect from "@myetherwallet/mewconnect-web-client";
+// @ts-ignore
+import { init as WallyConnect } from "web3modal/src/sdk";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -247,16 +249,18 @@ class App extends React.Component<any, any> {
           infuraId,
         },
       },
-      web3auth: {
-        package: Web3Auth,
+      wallyconnect: {
+        package: WallyConnect, // required
         options: {
-          infuraId,
+          clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
+          isDevelopment: false,
+          devUrl: "http://localhost:3000", // optional
         },
       },
       mewconnect: {
         package: MewConnect, // required
         options: {
-          infuraId: "INFURA_ID", // required
+          infuraId,
         },
       },
     };
