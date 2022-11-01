@@ -5,40 +5,44 @@ import { convertUtf8ToHex } from "@walletconnect/utils";
 // @ts-ignore
 import Web3Modal from "web3modal";
 // @ts-ignore
-import WalletConnect from "@walletconnect/web3-provider";
-// @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
-import { Web3Auth } from "@web3auth/web3auth";
+import MewConnect from "@myetherwallet/mewconnect-web-client";
+// @ts-ignore
+import WalletConnect from "@walletconnect/web3-provider";
+// @ts-ignore
+import WallyConnector from "wally-sdk/dist/wally-connector";
 
-import Button from "./components/Button";
-import Column from "./components/Column";
-import Wrapper from "./components/Wrapper";
-import Modal from "./components/Modal";
-import Header from "./components/Header";
-import Loader from "./components/Loader";
-import ModalResult from "./components/ModalResult";
-import AccountAssets from "./components/AccountAssets";
-import ConnectButton from "./components/ConnectButton";
+import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
-import { apiGetAccountAssets } from "./helpers/api";
+import Button from "../components/Button";
+import Column from "../components/Column";
+import Wrapper from "../components/Wrapper";
+import Modal from "../components/Modal";
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import ModalResult from "../components/ModalResult";
+import AccountAssets from "../components/AccountAssets";
+import ConnectButton from "../components/ConnectButton";
+
+import { apiGetAccountAssets } from "../helpers/api";
 import {
   hashPersonalMessage,
   recoverPublicKey,
   recoverPersonalSignature,
   formatTestTransaction,
-  getChainData
-} from "./helpers/utilities";
-import { IAssetData } from "./helpers/types";
-import { fonts } from "./styles";
+  getChainData,
+} from "../helpers/utilities";
+import { IAssetData } from "../helpers/types";
+import { fonts } from "../styles";
 import {
   ETH_SEND_TRANSACTION,
   ETH_SIGN,
   PERSONAL_SIGN,
   DAI_BALANCE_OF,
-  DAI_TRANSFER
-} from "./constants";
-import { callBalanceOf, callTransfer } from "./helpers/web3";
+  DAI_TRANSFER,
+} from "../constants";
+import { callBalanceOf, callTransfer } from "../helpers/web3";
 
 const SLayout = styled.div`
   position: relative;
@@ -120,6 +124,8 @@ interface IAppState {
   showModal: boolean;
   pendingRequest: boolean;
   result: any | null;
+  // added the following to store the wally client id
+  wallyClientId: string;
 }
 
 const INITIAL_STATE: IAppState = {
@@ -133,7 +139,8 @@ const INITIAL_STATE: IAppState = {
   assets: [],
   showModal: false,
   pendingRequest: false,
-  result: null
+  result: null,
+  wallyClientId: "",
 };
 
 function initWeb3(provider: any) {
@@ -144,9 +151,9 @@ function initWeb3(provider: any) {
       {
         name: "chainId",
         call: "eth_chainId",
-        outputFormatter: web3.utils.hexToNumber
-      }
-    ]
+        outputFormatter: web3.utils.hexToNumber,
+      },
+    ],
   });
 
   return web3;
@@ -160,47 +167,116 @@ class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      ...INITIAL_STATE
+      ...INITIAL_STATE,
     };
 
     this.web3Modal = new Web3Modal({
       network: this.getNetwork(),
       cacheProvider: true,
-      providerOptions: this.getProviderOptions()
+      providerOptions: this.getProviderOptions(),
     });
+
+    // Listen to storage event
+    window.addEventListener("storage", e => this.storageChanged(e));
+
+    // Bind this to storageChanged()
+    this.storageChanged = this.storageChanged.bind(this);
+  }
+
+  // Listens for the change in the wally authentication token in the local storage
+  storageChanged(e: StorageEvent) {
+    if (e.key === `wally:${this.state.wallyClientId}:token`) {
+      window.location.reload();
+    }
   }
 
   public componentDidMount() {
     if (this.web3Modal.cachedProvider) {
       this.onConnect();
+      console.log("cachedProvider:", this.web3Modal.cachedProvider);
     }
+  }
+
+  public componentWillUnmount(): void {
+    window.removeEventListener("storage", this.storageChanged);
   }
 
   public onConnect = async () => {
     const provider = await this.web3Modal.connect();
 
-    await this.subscribeProvider(provider);
+    // listens for the wally provider to be connected
+    if (this.web3Modal.cachedProvider === "custom-wallyconnect") {
+      this.setState({ wallyClientId: provider.clientId });
 
-    await provider.enable();
-    const web3: any = initWeb3(provider);
+      await this.subscribeProvider(provider);
 
-    const accounts = await web3.eth.getAccounts();
+      const web3: any = initWeb3(provider);
+      await web3.eth.requestAccounts();
 
-    const address = accounts[0];
+      const address = await web3.eth.currentProvider.selectedAddress;
 
-    const networkId = await web3.eth.net.getId();
+      const bearerToken = process.env.REACT_APP_WALLY_TOKEN;
+      const host = process.env.REACT_APP_WALLY_HOST;
+      const resp = await fetch(`${host}/app`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
 
-    const chainId = await web3.eth.chainId();
+      const data = await resp.text();
+      console.log(JSON.parse(data).environment);
 
-    await this.setState({
-      web3,
-      provider,
-      connected: true,
-      address,
-      chainId,
-      networkId
-    });
-    await this.getAccountAssets();
+      const wallyEnvironment = JSON.parse(data).environment;
+
+      const networkTypes = [
+        { id: 1, name: "mainnet", wallyEnvironment: "ETHEREUM" },
+        { id: 5, name: "goerli", wallyEnvironment: "ETHEREUM_GOERLI" },
+      ];
+
+      const networkId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
+
+      const chainId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
+
+      await this.setState({
+        web3,
+        provider,
+        connected: true,
+        address,
+        chainId,
+        networkId,
+      });
+
+      await this.getAccountAssets();
+    } else {
+      await this.subscribeProvider(provider);
+
+      await provider.enable();
+      const web3: any = initWeb3(provider);
+
+      const accounts = await web3.eth.getAccounts().catch((err: any) => {
+        console.log("getAccounts err:", err);
+      });
+
+      const address = accounts[0];
+      const networkId = await web3.eth.net.getId();
+      const chainId = await web3.eth.chainId();
+
+      await this.setState({
+        web3,
+        provider,
+        connected: true,
+        address,
+        chainId,
+        networkId,
+      });
+
+      await this.getAccountAssets();
+    }
   };
 
   public subscribeProvider = async (provider: any) => {
@@ -230,28 +306,49 @@ class App extends React.Component<any, any> {
   public getNetwork = () => getChainData(this.state.chainId).network;
 
   public getProviderOptions = () => {
-    const infuraId = process.env.REACT_APP_INFURA_ID;
+    const infuraId = process.env.REACT_APP_INFURA_API;
+    const wallyClientId = process.env.REACT_APP_WALLY_CLIENT_ID;
+
     const providerOptions = {
-      walletconnect: {
-        package: WalletConnect,
-        options: {
-          infuraId
-        }
-      },
       coinbasewallet: {
         package: CoinbaseWalletSDK,
         options: {
           appName: "Web3Modal Example App",
-          infuraId
-        }
+          infuraId,
+        },
       },
-      web3auth: {
-        package: Web3Auth,
+      walletconnect: {
+        package: WalletConnect,
         options: {
-          infuraId
-        }
-      }
+          infuraId,
+        },
+      },
+      mewconnect: {
+        package: MewConnect, // required
+        options: {
+          infuraId,
+        },
+      },
+      "custom-wallyconnect": {
+        display: {
+          logo: wallylogo,
+          name: "WallyConnect",
+          description: "Connect to Wally",
+        },
+        options: {
+          clientId: wallyClientId, // required
+        },
+        package: WallyConnector, // required
+        connector: async (
+          ProviderPackage: new (arg0: any) => any,
+          options: any
+        ) => {
+          const provider = new ProviderPackage(options);
+          return provider;
+        },
+      },
     };
+
     return providerOptions;
   };
 
@@ -261,7 +358,7 @@ class App extends React.Component<any, any> {
     try {
       // get account balances
       const assets = await apiGetAccountAssets(address, chainId);
-
+      console.log("assets", assets);
       await this.setState({ fetching: false, assets });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -269,17 +366,20 @@ class App extends React.Component<any, any> {
     }
   };
 
-  public toggleModal = () =>
+  public toggleModal = () => {
     this.setState({ showModal: !this.state.showModal });
+  };
 
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
+    const providerCached = this.web3Modal.cachedProvider;
 
     if (!web3) {
       return;
     }
 
     const tx = await formatTestTransaction(address, chainId);
+    console.log("web3", web3);
 
     try {
       // open modal
@@ -290,12 +390,21 @@ class App extends React.Component<any, any> {
 
       // @ts-ignore
       function sendTransaction(_tx: any) {
-        return new Promise((resolve, reject) => {
-          web3.eth
-            .sendTransaction(_tx)
-            .once("transactionHash", (txHash: string) => resolve(txHash))
-            .catch((err: any) => reject(err));
-        });
+        if (providerCached === "custom-wallyconnect") {
+          return new Promise((resolve, reject) => {
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (result: any) => resolve(result))
+              .catch((err: any) => reject(err));
+          });
+        } else {
+          return new Promise((resolve, reject) => {
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (txHash: string) => resolve(txHash))
+              .catch((err: any) => reject(err));
+          });
+        }
       }
 
       // send transaction
@@ -307,14 +416,14 @@ class App extends React.Component<any, any> {
         txHash: result,
         from: address,
         to: address,
-        value: "0 ETH"
+        value: "0 ETH",
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -343,7 +452,7 @@ class App extends React.Component<any, any> {
       this.setState({ pendingRequest: true });
 
       // send message
-      const result = await web3.eth.sign(hash, address);
+      const result = await web3.eth.sign(message, address);
 
       // verify signature
       const signer = recoverPublicKey(result, hash);
@@ -355,14 +464,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -403,14 +512,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -452,14 +561,14 @@ class App extends React.Component<any, any> {
       // format displayed result
       const formattedResult = {
         action: functionSig,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -485,7 +594,7 @@ class App extends React.Component<any, any> {
       fetching,
       showModal,
       pendingRequest,
-      result
+      result,
     } = this.state;
     return (
       <SLayout>
@@ -518,19 +627,6 @@ class App extends React.Component<any, any> {
 
                     <STestButton left onClick={this.testSignPersonalMessage}>
                       {PERSONAL_SIGN}
-                    </STestButton>
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_BALANCE_OF)}
-                    >
-                      {DAI_BALANCE_OF}
-                    </STestButton>
-
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_TRANSFER)}
-                    >
-                      {DAI_TRANSFER}
                     </STestButton>
                   </STestButtonContainer>
                 </Column>
