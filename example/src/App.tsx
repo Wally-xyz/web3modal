@@ -9,11 +9,13 @@ import WalletConnect from "@walletconnect/web3-provider";
 // @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
-// import { Web3Auth } from "@web3auth/web3auth";
+import { Web3Auth } from "@web3auth/web3auth";
 // @ts-ignore
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
-import { init as WallyConnect } from "web3modal/src/sdk";
+import WallyConnector from "web3modal/src/sdk/wally-connector";
+
+import wallylogo from "../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -234,27 +236,49 @@ class App extends React.Component<any, any> {
   public getNetwork = () => getChainData(this.state.chainId).network;
 
   public getProviderOptions = () => {
-    const infuraId = process.env.REACT_APP_INFURA_ID;
+    const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
     const providerOptions = {
-      walletconnect: {
-        package: WalletConnect,
-        options: {
-          infuraId,
+      // walletconnect: {
+      //   package: WalletConnect,
+      //   options: {
+      //     infuraId,
+      //   },
+      // },
+      // coinbasewallet: {
+      //   package: CoinbaseWalletSDK,
+      //   options: {
+      //     appName: "Web3Modal Example App",
+      //     infuraId,
+      //   },
+      // },
+      // // wallyconnect: {
+      // //   package: WallyConnect, // required
+      // //   options: {
+      // //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
+      // //     isDevelopment: false,
+      // //     devUrl: "http://localhost:3000", // optional
+      // //   },
+      // // },
+
+      "custom-wallyconnect": {
+        display: {
+          logo: wallylogo,
+          name: "WallyConnect",
+          description: "Connect to Wally",
         },
-      },
-      coinbasewallet: {
-        package: CoinbaseWalletSDK,
-        options: {
-          appName: "Web3Modal Example App",
-          infuraId,
-        },
-      },
-      wallyconnect: {
-        package: WallyConnect, // required
         options: {
           clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
-          isDevelopment: false,
-          devUrl: "http://localhost:3000", // optional
+        },
+        package: WallyConnector, // required
+        connector: async (
+          ProviderPackage: new (arg0: any) => any,
+          options: any
+        ) => {
+          const provider = new ProviderPackage(options);
+
+          await provider.loginWithEmail();
+
+          return provider;
         },
       },
       mewconnect: {
