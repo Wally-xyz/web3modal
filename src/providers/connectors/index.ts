@@ -19,7 +19,7 @@ import opera from "./opera";
 import web3auth from "./web3auth";
 import bitkeep from "./bitkeep";
 import starzwallet from "./starzwallet";
-import { init as wally } from "../../sdk";
+import wally from "./wallyconnect";
 
 export {
   injected,

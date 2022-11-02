@@ -5,6 +5,9 @@ import * as providers from "./providers";
 // @ts-ignore
 import MEWwallet from "./logos/mewwallet.png";
 
+// @ts-ignore
+import WallyLogo from "./logos/wallyconnect.png";
+
 export { connectors, injected, providers };
 
 export const MEWCONNECT: IProviderInfo = {
@@ -15,5 +18,16 @@ export const MEWCONNECT: IProviderInfo = {
   check: "isMewConnect",
   package: {
     required: [["infuraId", "rpc"]],
+  },
+};
+
+export const WALLY: IProviderInfo = {
+  id: "wally",
+  name: "Wally",
+  logo: WallyLogo,
+  type: "web",
+  check: "isWally",
+  package: {
+    required: [["clientId"]],
   },
 };

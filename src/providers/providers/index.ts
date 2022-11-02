@@ -231,4 +231,7 @@ export const WALLY: IProviderInfo = {
   logo: WallyLogo,
   type: "web",
   check: "isWally",
+  package: {
+    required: [["clientId"]],
+  },
 };
