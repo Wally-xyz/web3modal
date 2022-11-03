@@ -10,6 +10,13 @@ import WalletConnect from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
 import { Web3Auth } from "@web3auth/web3auth";
+// @ts-ignore
+import MewConnect from "@myetherwallet/mewconnect-web-client";
+// @ts-ignore
+import WallyConnector from "web3modal/src/sdk/wally-connector";
+import { handleRedirect, init } from "web3modal/src/sdk";
+
+import wallylogo from "../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -27,7 +34,7 @@ import {
   recoverPublicKey,
   recoverPersonalSignature,
   formatTestTransaction,
-  getChainData
+  getChainData,
 } from "./helpers/utilities";
 import { IAssetData } from "./helpers/types";
 import { fonts } from "./styles";
@@ -36,9 +43,10 @@ import {
   ETH_SIGN,
   PERSONAL_SIGN,
   DAI_BALANCE_OF,
-  DAI_TRANSFER
+  DAI_TRANSFER,
 } from "./constants";
 import { callBalanceOf, callTransfer } from "./helpers/web3";
+import { useState } from "react";
 
 const SLayout = styled.div`
   position: relative;
@@ -133,7 +141,7 @@ const INITIAL_STATE: IAppState = {
   assets: [],
   showModal: false,
   pendingRequest: false,
-  result: null
+  result: null,
 };
 
 function initWeb3(provider: any) {
@@ -144,9 +152,9 @@ function initWeb3(provider: any) {
       {
         name: "chainId",
         call: "eth_chainId",
-        outputFormatter: web3.utils.hexToNumber
-      }
-    ]
+        outputFormatter: web3.utils.hexToNumber,
+      },
+    ],
   });
 
   return web3;
@@ -160,13 +168,13 @@ class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      ...INITIAL_STATE
+      ...INITIAL_STATE,
     };
 
     this.web3Modal = new Web3Modal({
       network: this.getNetwork(),
       cacheProvider: true,
-      providerOptions: this.getProviderOptions()
+      providerOptions: this.getProviderOptions(),
     });
   }
 
@@ -198,7 +206,7 @@ class App extends React.Component<any, any> {
       connected: true,
       address,
       chainId,
-      networkId
+      networkId,
     });
     await this.getAccountAssets();
   };
@@ -230,28 +238,70 @@ class App extends React.Component<any, any> {
   public getNetwork = () => getChainData(this.state.chainId).network;
 
   public getProviderOptions = () => {
-    const infuraId = process.env.REACT_APP_INFURA_ID;
+    const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
     const providerOptions = {
       walletconnect: {
         package: WalletConnect,
         options: {
-          infuraId
-        }
+          infuraId,
+        },
       },
       coinbasewallet: {
         package: CoinbaseWalletSDK,
         options: {
           appName: "Web3Modal Example App",
-          infuraId
-        }
+          infuraId,
+        },
       },
-      web3auth: {
-        package: Web3Auth,
+
+      // wallyconnect: {
+      //   package: WallyConnector, // required
+      //   options: {
+      //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
+      //     isDevelopment: false,
+      //     devUrl: "http://localhost:3000", // optional
+      //   },
+      // },
+
+      "custom-wallyconnect": {
+        display: {
+          logo: wallylogo,
+          name: "WallyConnect",
+          description: "Connect to Wally",
+        },
         options: {
-          infuraId
-        }
-      }
+          clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
+        },
+        package: WallyConnector, // required
+        connector: async (
+          ProviderPackage: new (arg0: any) => any,
+          options: any
+        ) => {
+          const provider = new ProviderPackage(options);
+          localStorage.setItem("wallyconnect", provider);
+          console.log("provider", provider);
+          await provider.loginWithEmail();
+
+          return provider;
+        },
+      },
+      mewconnect: {
+        package: MewConnect, // required
+        options: {
+          infuraId,
+        },
+      },
     };
+    init(providerOptions["custom-wallyconnect"].options);
+    const queryParams = new URLSearchParams(window.location.search);
+    const term = queryParams.get("authorization_code");
+    if (term) {
+      handleRedirect({
+        closeWindow: true,
+        appendContent: true,
+      });
+    }
+
     return providerOptions;
   };
 
@@ -261,7 +311,7 @@ class App extends React.Component<any, any> {
     try {
       // get account balances
       const assets = await apiGetAccountAssets(address, chainId);
-
+      console.log("assets", assets);
       await this.setState({ fetching: false, assets });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -307,14 +357,14 @@ class App extends React.Component<any, any> {
         txHash: result,
         from: address,
         to: address,
-        value: "0 ETH"
+        value: "0 ETH",
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -355,14 +405,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -403,14 +453,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -452,14 +502,14 @@ class App extends React.Component<any, any> {
       // format displayed result
       const formattedResult = {
         action: functionSig,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -485,7 +535,7 @@ class App extends React.Component<any, any> {
       fetching,
       showModal,
       pendingRequest,
-      result
+      result,
     } = this.state;
     return (
       <SLayout>

@@ -36,7 +36,8 @@ import SequenceLogo from "../logos/sequence.svg";
 import BitkeepLogo from "../logos/bitkeepwallet.png";
 // @ts-ignore
 import StarzWalletLogo from "../logos/starzwallet.svg";
-
+// @ts-ignore
+import WallyLogo from "../logos/wallyconnect.png";
 
 import { IProviderInfo } from "../../helpers";
 
@@ -49,8 +50,8 @@ export const WALLETCONNECT: IProviderInfo = {
   type: "qrcode",
   check: "isWalletConnect",
   package: {
-    required: [["infuraId", "rpc"]]
-  }
+    required: [["infuraId", "rpc"]],
+  },
 };
 
 export const PORTIS: IProviderInfo = {
@@ -60,8 +61,8 @@ export const PORTIS: IProviderInfo = {
   type: "web",
   check: "isPortis",
   package: {
-    required: ["id"]
-  }
+    required: ["id"],
+  },
 };
 
 export const FORTMATIC: IProviderInfo = {
@@ -71,8 +72,8 @@ export const FORTMATIC: IProviderInfo = {
   type: "web",
   check: "isFortmatic",
   package: {
-    required: ["key"]
-  }
+    required: ["key"],
+  },
 };
 
 export const TORUS: IProviderInfo = {
@@ -80,7 +81,7 @@ export const TORUS: IProviderInfo = {
   name: "Torus",
   logo: TorusLogo,
   type: "web",
-  check: "isTorus"
+  check: "isTorus",
 };
 
 export const VENLY: IProviderInfo = {
@@ -90,8 +91,8 @@ export const VENLY: IProviderInfo = {
   type: "web",
   check: "isVenly",
   package: {
-    required: ["clientId"]
-  }
+    required: ["clientId"],
+  },
 };
 
 export const AUTHEREUM: IProviderInfo = {
@@ -99,7 +100,7 @@ export const AUTHEREUM: IProviderInfo = {
   name: "Authereum",
   logo: AuthereumLogo,
   type: "web",
-  check: "isAuthereum"
+  check: "isAuthereum",
 };
 
 export const BURNERCONNECT: IProviderInfo = {
@@ -107,7 +108,7 @@ export const BURNERCONNECT: IProviderInfo = {
   name: "Burner Connect",
   logo: BurnerWalletLogo,
   type: "web",
-  check: "isBurnerProvider"
+  check: "isBurnerProvider",
 };
 
 export const MEWCONNECT: IProviderInfo = {
@@ -117,8 +118,8 @@ export const MEWCONNECT: IProviderInfo = {
   type: "qrcode",
   check: "isMEWconnect",
   package: {
-    required: [["infuraId", "rpc"]]
-  }
+    required: [["infuraId", "rpc"]],
+  },
 };
 
 export const DCENT: IProviderInfo = {
@@ -128,8 +129,8 @@ export const DCENT: IProviderInfo = {
   type: "hardware",
   check: "isDcentWallet",
   package: {
-    required: ["rpcUrl"]
-  }
+    required: ["rpcUrl"],
+  },
 };
 
 export const BITSKI: IProviderInfo = {
@@ -139,8 +140,8 @@ export const BITSKI: IProviderInfo = {
   type: "web",
   check: "isBitski",
   package: {
-    required: ["clientId", "callbackUrl"]
-  }
+    required: ["clientId", "callbackUrl"],
+  },
 };
 
 export const FRAME: IProviderInfo = {
@@ -148,7 +149,7 @@ export const FRAME: IProviderInfo = {
   name: "Frame",
   logo: FrameLogo,
   type: "web",
-  check: "isFrameNative"
+  check: "isFrameNative",
 };
 
 export const BINANCECHAINWALLET: IProviderInfo = {
@@ -156,7 +157,7 @@ export const BINANCECHAINWALLET: IProviderInfo = {
   name: "Binance Chain",
   logo: BinanceChainWalletLogo,
   type: "injected",
-  check: "isBinanceChainWallet"
+  check: "isBinanceChainWallet",
 };
 
 /**
@@ -169,8 +170,8 @@ export const WALLETLINK: IProviderInfo = {
   type: "qrcode",
   check: "isWalletLink",
   package: {
-    required: [["appName", "infuraId", "rpc"]]
-  }
+    required: [["appName", "infuraId", "rpc"]],
+  },
 };
 
 export const COINBASEWALLET: IProviderInfo = {
@@ -180,8 +181,8 @@ export const COINBASEWALLET: IProviderInfo = {
   type: "injected",
   check: "isWalletLink",
   package: {
-    required: [["appName", "infuraId", "rpc"]]
-  }
+    required: [["appName", "infuraId", "rpc"]],
+  },
 };
 
 export const SEQUENCE: IProviderInfo = {
@@ -189,7 +190,7 @@ export const SEQUENCE: IProviderInfo = {
   name: "Sequence",
   logo: SequenceLogo,
   type: "web",
-  check: "isSequenceWeb"
+  check: "isSequenceWeb",
 };
 
 export const OPERA: IProviderInfo = {
@@ -197,7 +198,7 @@ export const OPERA: IProviderInfo = {
   name: "Opera",
   logo: OperaLogo,
   type: "injected",
-  check: "isOpera"
+  check: "isOpera",
 };
 
 export const WEB3AUTH: IProviderInfo = {
@@ -205,7 +206,7 @@ export const WEB3AUTH: IProviderInfo = {
   name: "Web3Auth",
   logo: Web3AuthLogo,
   type: "injected",
-  check: "isWeb3Auth"
+  check: "isWeb3Auth",
 };
 
 export const BITKEEPWALLET: IProviderInfo = {
@@ -213,7 +214,7 @@ export const BITKEEPWALLET: IProviderInfo = {
   name: "Bitkeep Wallet",
   logo: BitkeepLogo,
   type: "injected",
-  check: "isBitKeep"
+  check: "isBitKeep",
 };
 
 export const STARZWALLET: IProviderInfo = {
@@ -221,6 +222,16 @@ export const STARZWALLET: IProviderInfo = {
   name: "99Starz",
   logo: StarzWalletLogo,
   type: "injected",
-  check: "isStarzWallet"
+  check: "isStarzWallet",
 };
 
+export const WALLY: IProviderInfo = {
+  id: "wally",
+  name: "Wally",
+  logo: WallyLogo,
+  type: "web",
+  check: "isWally",
+  package: {
+    required: [["clientId"]],
+  },
+};
