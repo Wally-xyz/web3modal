@@ -8,7 +8,7 @@ export interface IWallyConnectorOptions extends IAbstractConnectorOptions {
 
 const ConnectToWally = (Wally: any, opts: IWallyConnectorOptions) => {
   return new Promise(async (resolve, reject) => {
-    let clientId = "103be027-a1a6-486c-ae24-0d19909b36d4";
+    let clientId = "15672a04-5ce6-48ff-991c-54ab200bdd5b";
     let isDevelopment = false;
     let devUrl = "http://localhost:3000";
 
@@ -24,7 +24,7 @@ const ConnectToWally = (Wally: any, opts: IWallyConnectorOptions) => {
       devUrl,
     });
     try {
-      await provider.enable();
+      await provider.loginWithEmail();
       resolve(provider);
     } catch (e) {
       reject(e);
