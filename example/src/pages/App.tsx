@@ -14,38 +14,38 @@ import { Web3Auth } from "@web3auth/web3auth";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
 import WallyConnector from "web3modal/src/sdk/wally-connector";
-import { handleRedirect, init } from "web3modal/src/sdk";
+import { handleRedirect, init, getProvider } from "web3modal/src/sdk";
 
-import wallylogo from "../node_modules/web3modal/src/providers/logos/wallyconnect.png";
+import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
-import Button from "./components/Button";
-import Column from "./components/Column";
-import Wrapper from "./components/Wrapper";
-import Modal from "./components/Modal";
-import Header from "./components/Header";
-import Loader from "./components/Loader";
-import ModalResult from "./components/ModalResult";
-import AccountAssets from "./components/AccountAssets";
-import ConnectButton from "./components/ConnectButton";
+import Button from "../components/Button";
+import Column from "../components/Column";
+import Wrapper from "../components/Wrapper";
+import Modal from "../components/Modal";
+import Header from "../components/Header";
+import Loader from "../components/Loader";
+import ModalResult from "../components/ModalResult";
+import AccountAssets from "../components/AccountAssets";
+import ConnectButton from "../components/ConnectButton";
 
-import { apiGetAccountAssets } from "./helpers/api";
+import { apiGetAccountAssets } from "../helpers/api";
 import {
   hashPersonalMessage,
   recoverPublicKey,
   recoverPersonalSignature,
   formatTestTransaction,
   getChainData,
-} from "./helpers/utilities";
-import { IAssetData } from "./helpers/types";
-import { fonts } from "./styles";
+} from "../helpers/utilities";
+import { IAssetData } from "../helpers/types";
+import { fonts } from "../styles";
 import {
   ETH_SEND_TRANSACTION,
   ETH_SIGN,
   PERSONAL_SIGN,
   DAI_BALANCE_OF,
   DAI_TRANSFER,
-} from "./constants";
-import { callBalanceOf, callTransfer } from "./helpers/web3";
+} from "../constants";
+import { callBalanceOf, callTransfer } from "../helpers/web3";
 import { useState } from "react";
 
 const SLayout = styled.div`
@@ -187,12 +187,20 @@ class App extends React.Component<any, any> {
   public onConnect = async () => {
     const provider = await this.web3Modal.connect();
 
+    if (provider.) {
+      console.log("WallyConnector was used!");
+    }
+
+    console.log("provider---->", provider.name);
+
     await this.subscribeProvider(provider);
 
     await provider.enable();
     const web3: any = initWeb3(provider);
+    console.log("web3---->", web3);
 
     const accounts = await web3.eth.getAccounts();
+    console.log("accounts---->", accounts);
 
     const address = accounts[0];
 
@@ -239,6 +247,7 @@ class App extends React.Component<any, any> {
 
   public getProviderOptions = () => {
     const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
+
     const providerOptions = {
       walletconnect: {
         package: WalletConnect,
@@ -278,8 +287,9 @@ class App extends React.Component<any, any> {
           options: any
         ) => {
           const provider = new ProviderPackage(options);
-          localStorage.setItem("wallyconnect", provider);
-          console.log("provider", provider);
+          // localStorage.setItem("wallyconnect", provider);
+          // console.log("provider", provider);
+          // init(providerOptions["custom-wallyconnect"].options);
           await provider.loginWithEmail();
 
           return provider;
@@ -292,15 +302,15 @@ class App extends React.Component<any, any> {
         },
       },
     };
-    init(providerOptions["custom-wallyconnect"].options);
-    const queryParams = new URLSearchParams(window.location.search);
-    const term = queryParams.get("authorization_code");
-    if (term) {
-      handleRedirect({
-        closeWindow: true,
-        appendContent: true,
-      });
-    }
+    // init(providerOptions["custom-wallyconnect"].options);
+    // const queryParams = new URLSearchParams(window.location.search);
+    // const term = queryParams.get("authorization_code");
+    // if (term) {
+    //   handleRedirect({
+    //     closeWindow: false,
+    //     appendContent: false,
+    //   });
+    // }
 
     return providerOptions;
   };
