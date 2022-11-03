@@ -157,6 +157,7 @@ class WallyConnector {
             authCode,
           }),
         });
+        console.log("resp", resp.body);
         if (
           resp &&
           (resp === null || resp === void 0 ? void 0 : resp.ok) &&
@@ -164,6 +165,7 @@ class WallyConnector {
         ) {
           const data = yield resp.json();
           this.setAuthToken(data.token);
+
           if (this.worker) {
             this.worker.port.postMessage(types_1.WorkerMessage.LOGIN_SUCCESS);
           } else {
