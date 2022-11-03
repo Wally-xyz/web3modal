@@ -238,27 +238,27 @@ class App extends React.Component<any, any> {
   public getProviderOptions = () => {
     const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
     const providerOptions = {
-      // walletconnect: {
-      //   package: WalletConnect,
+      walletconnect: {
+        package: WalletConnect,
+        options: {
+          infuraId,
+        },
+      },
+      coinbasewallet: {
+        package: CoinbaseWalletSDK,
+        options: {
+          appName: "Web3Modal Example App",
+          infuraId,
+        },
+      },
+      // wallyconnect: {
+      //   package: WallyConnector, // required
       //   options: {
-      //     infuraId,
+      //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
+      //     isDevelopment: false,
+      //     devUrl: "http://localhost:3000", // optional
       //   },
       // },
-      // coinbasewallet: {
-      //   package: CoinbaseWalletSDK,
-      //   options: {
-      //     appName: "Web3Modal Example App",
-      //     infuraId,
-      //   },
-      // },
-      // // wallyconnect: {
-      // //   package: WallyConnect, // required
-      // //   options: {
-      // //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
-      // //     isDevelopment: false,
-      // //     devUrl: "http://localhost:3000", // optional
-      // //   },
-      // // },
 
       "custom-wallyconnect": {
         display: {
@@ -267,7 +267,7 @@ class App extends React.Component<any, any> {
           description: "Connect to Wally",
         },
         options: {
-          clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
+          clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
         },
         package: WallyConnector, // required
         connector: async (
@@ -297,7 +297,7 @@ class App extends React.Component<any, any> {
     try {
       // get account balances
       const assets = await apiGetAccountAssets(address, chainId);
-
+      console.log("assets", assets);
       await this.setState({ fetching: false, assets });
     } catch (error) {
       console.error(error); // tslint:disable-line
