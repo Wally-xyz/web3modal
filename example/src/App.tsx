@@ -14,6 +14,7 @@ import { Web3Auth } from "@web3auth/web3auth";
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
 import WallyConnector from "web3modal/src/sdk/wally-connector";
+import { handleRedirect, init } from "web3modal/src/sdk";
 
 import wallylogo from "../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
@@ -45,6 +46,7 @@ import {
   DAI_TRANSFER,
 } from "./constants";
 import { callBalanceOf, callTransfer } from "./helpers/web3";
+import { useState } from "react";
 
 const SLayout = styled.div`
   position: relative;
@@ -251,6 +253,7 @@ class App extends React.Component<any, any> {
           infuraId,
         },
       },
+
       // wallyconnect: {
       //   package: WallyConnector, // required
       //   options: {
@@ -275,7 +278,8 @@ class App extends React.Component<any, any> {
           options: any
         ) => {
           const provider = new ProviderPackage(options);
-
+          localStorage.setItem("wallyconnect", provider);
+          console.log("provider", provider);
           await provider.loginWithEmail();
 
           return provider;
@@ -288,6 +292,16 @@ class App extends React.Component<any, any> {
         },
       },
     };
+    init(providerOptions["custom-wallyconnect"].options);
+    const queryParams = new URLSearchParams(window.location.search);
+    const term = queryParams.get("authorization_code");
+    if (term) {
+      handleRedirect({
+        closeWindow: true,
+        appendContent: true,
+      });
+    }
+
     return providerOptions;
   };
 
