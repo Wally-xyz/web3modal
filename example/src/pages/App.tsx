@@ -187,9 +187,9 @@ class App extends React.Component<any, any> {
   public onConnect = async () => {
     const provider = await this.web3Modal.connect();
 
-    if (provider.) {
-      console.log("WallyConnector was used!");
-    }
+    // if (provider===WalletConnect) {
+    //   console.log("WallyConnector was used!");
+    // }
 
     console.log("provider---->", provider.name);
 
