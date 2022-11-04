@@ -129,7 +129,7 @@ interface IAppState {
   showModal: boolean;
   pendingRequest: boolean;
   result: any | null;
-  isWally: boolean;
+  // isWally: boolean;
 }
 
 const INITIAL_STATE: IAppState = {
@@ -144,7 +144,7 @@ const INITIAL_STATE: IAppState = {
   showModal: false,
   pendingRequest: false,
   result: null,
-  isWally: false,
+  // isWally: false,
 };
 
 function initWeb3(provider: any) {
@@ -184,30 +184,50 @@ class App extends React.Component<any, any> {
   public componentDidMount() {
     if (this.web3Modal.cachedProvider) {
       this.onConnect();
+      console.log("cachedProvider:", this.web3Modal.cachedProvider);
     }
   }
 
   public onConnect = async () => {
-    if (this.state.isWally === true) {
-      Promise.resolve(getProvider()).then((p) => {
-        if (p) {
-          this.setState({ provider: (this.state.provider = p) });
-          // const web3 = new Web3(p);
-          // this.setState({ web3: (this.state.web3 = web3) });
-        }
-      });
-      if (
-        this.state.provider &&
-        this.state.provider.selectedAddress &&
-        this.state.address !== this.state.provider.selectedAddress
-      ) {
-        this.setState({ address: this.state.provider.selectedAddress || null });
-      }
-      console.log(" address --->", this.state.address);
-    } else {
+    if (this.web3Modal.cachedProvider === "custom-wallyconnect") {
+      console.log("Wally is true");
       const provider = await this.web3Modal.connect();
 
-      console.log("provider---->", provider.name);
+      console.log("provider---->", provider);
+
+      await this.subscribeProvider(provider);
+
+      await provider.requestAccounts();
+
+      const web3: any = initWeb3(provider);
+      console.log("web3---->", web3);
+
+      const accounts = await web3.eth._provider.selectedAddress;
+      console.log("accounts---->", accounts);
+
+      const address = accounts;
+
+      const networkId = 1;
+      // await web3.eth.net.getId();
+
+      const chainId = 1;
+      // await web3.eth.chainId();
+
+      await this.setState({
+        web3,
+        provider,
+        connected: true,
+        address,
+        chainId,
+        networkId,
+      });
+
+      await this.getAccountAssets();
+    } else {
+      console.log("Wally is false");
+      const provider = await this.web3Modal.connect();
+
+      console.log("provider---->", provider);
 
       await this.subscribeProvider(provider);
 
@@ -215,14 +235,18 @@ class App extends React.Component<any, any> {
       const web3: any = initWeb3(provider);
       console.log("web3---->", web3);
 
-      const accounts = await web3.eth.getAccounts();
+      const accounts = await web3.eth.getAccounts().catch((err: any) => {
+        console.log("getAccounts err:", err);
+      });
       console.log("accounts---->", accounts);
 
       const address = accounts[0];
 
       const networkId = await web3.eth.net.getId();
+      console.log("networkId---->", networkId);
 
       const chainId = await web3.eth.chainId();
+      console.log("chainId---->", chainId);
 
       await this.setState({
         web3,
@@ -298,6 +322,7 @@ class App extends React.Component<any, any> {
         },
         options: {
           clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
+          didHandleRedirect: true,
         },
         package: WallyConnector, // required
         connector: async (
@@ -305,12 +330,12 @@ class App extends React.Component<any, any> {
           options: any
         ) => {
           const provider = new ProviderPackage(options);
-          this.setState({ isWally: true });
-          console.log("wally changed---->", this.state.isWally);
-          // localStorage.setItem("wallyconnect", provider);
-          // console.log("provider", provider);
-          // init(providerOptions["custom-wallyconnect"].options);
-          await provider.loginWithEmail();
+
+          init({
+            clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b",
+          });
+
+          await provider.requestAccounts();
 
           return provider;
         },
