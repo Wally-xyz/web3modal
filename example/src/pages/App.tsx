@@ -347,15 +347,6 @@ class App extends React.Component<any, any> {
         },
       },
     };
-    // init(providerOptions["custom-wallyconnect"].options);
-    // const queryParams = new URLSearchParams(window.location.search);
-    // const term = queryParams.get("authorization_code");
-    // if (term) {
-    //   handleRedirect({
-    //     closeWindow: false,
-    //     appendContent: false,
-    //   });
-    // }
 
     return providerOptions;
   };
