@@ -47,6 +47,7 @@ import {
 } from "../constants";
 import { callBalanceOf, callTransfer } from "../helpers/web3";
 import { useState } from "react";
+import { throws } from "assert";
 
 const SLayout = styled.div`
   position: relative;
@@ -128,6 +129,7 @@ interface IAppState {
   showModal: boolean;
   pendingRequest: boolean;
   result: any | null;
+  isWally: boolean;
 }
 
 const INITIAL_STATE: IAppState = {
@@ -142,6 +144,7 @@ const INITIAL_STATE: IAppState = {
   showModal: false,
   pendingRequest: false,
   result: null,
+  isWally: false,
 };
 
 function initWeb3(provider: any) {
@@ -185,38 +188,53 @@ class App extends React.Component<any, any> {
   }
 
   public onConnect = async () => {
-    const provider = await this.web3Modal.connect();
+    if (this.state.isWally === true) {
+      Promise.resolve(getProvider()).then((p) => {
+        if (p) {
+          this.setState({ provider: (this.state.provider = p) });
+          // const web3 = new Web3(p);
+          // this.setState({ web3: (this.state.web3 = web3) });
+        }
+      });
+      if (
+        this.state.provider &&
+        this.state.provider.selectedAddress &&
+        this.state.address !== this.state.provider.selectedAddress
+      ) {
+        this.setState({ address: this.state.provider.selectedAddress || null });
+      }
+      console.log(" address --->", this.state.address);
+    } else {
+      const provider = await this.web3Modal.connect();
 
-    // if (provider===WalletConnect) {
-    //   console.log("WallyConnector was used!");
-    // }
+      console.log("provider---->", provider.name);
 
-    console.log("provider---->", provider.name);
+      await this.subscribeProvider(provider);
 
-    await this.subscribeProvider(provider);
+      await provider.enable();
+      const web3: any = initWeb3(provider);
+      console.log("web3---->", web3);
 
-    await provider.enable();
-    const web3: any = initWeb3(provider);
-    console.log("web3---->", web3);
+      const accounts = await web3.eth.getAccounts();
+      console.log("accounts---->", accounts);
 
-    const accounts = await web3.eth.getAccounts();
-    console.log("accounts---->", accounts);
+      const address = accounts[0];
 
-    const address = accounts[0];
+      const networkId = await web3.eth.net.getId();
 
-    const networkId = await web3.eth.net.getId();
+      const chainId = await web3.eth.chainId();
 
-    const chainId = await web3.eth.chainId();
+      await this.setState({
+        web3,
+        provider,
+        connected: true,
+        address,
+        chainId,
+        networkId,
+      });
 
-    await this.setState({
-      web3,
-      provider,
-      connected: true,
-      address,
-      chainId,
-      networkId,
-    });
-    await this.getAccountAssets();
+      await this.getAccountAssets();
+    }
   };
 
   public subscribeProvider = async (provider: any) => {
@@ -287,6 +305,8 @@ class App extends React.Component<any, any> {
           options: any
         ) => {
           const provider = new ProviderPackage(options);
+          this.setState({ isWally: true });
+          console.log("wally changed---->", this.state.isWally);
           // localStorage.setItem("wallyconnect", provider);
           // console.log("provider", provider);
           // init(providerOptions["custom-wallyconnect"].options);
