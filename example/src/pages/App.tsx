@@ -9,12 +9,9 @@ import WalletConnect from "@walletconnect/web3-provider";
 // @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
-import { Web3Auth } from "@web3auth/web3auth";
-// @ts-ignore
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
 import WallyConnector from "web3modal/src/sdk/wally-connector";
-import { handleRedirect, init, getProvider } from "web3modal/src/sdk";
 
 import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
@@ -46,8 +43,6 @@ import {
   DAI_TRANSFER,
 } from "../constants";
 import { callBalanceOf, callTransfer } from "../helpers/web3";
-import { useState } from "react";
-import { throws } from "assert";
 
 const SLayout = styled.div`
   position: relative;
@@ -200,6 +195,10 @@ class App extends React.Component<any, any> {
       this.onConnect();
       console.log("cachedProvider:", this.web3Modal.cachedProvider);
     }
+  }
+
+  public componentWillUnmount(): void {
+    window.removeEventListener("storage", this.storageChanged);
   }
 
   public onConnect = async () => {
