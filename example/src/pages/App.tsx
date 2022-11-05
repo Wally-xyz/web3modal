@@ -209,13 +209,10 @@ class App extends React.Component<any, any> {
       this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
-
       await provider.requestAccounts();
 
       const web3: any = initWeb3(provider);
-
       const accounts = await web3.eth._provider.selectedAddress;
-
       const address = accounts;
 
       // Needs to be included in the SDK to get the networkId and chainId
@@ -243,7 +240,6 @@ class App extends React.Component<any, any> {
       });
 
       const address = accounts[0];
-
       const networkId = await web3.eth.net.getId();
       const chainId = await web3.eth.chainId();
 
