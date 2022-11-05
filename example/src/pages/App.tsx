@@ -129,7 +129,8 @@ interface IAppState {
   showModal: boolean;
   pendingRequest: boolean;
   result: any | null;
-  // isWally: boolean;
+  // added the following to store the wally client id
+  wallyClientId: string;
 }
 
 const INITIAL_STATE: IAppState = {
@@ -144,7 +145,7 @@ const INITIAL_STATE: IAppState = {
   showModal: false,
   pendingRequest: false,
   result: null,
-  // isWally: false,
+  wallyClientId: "",
 };
 
 function initWeb3(provider: any) {
@@ -179,6 +180,19 @@ class App extends React.Component<any, any> {
       cacheProvider: true,
       providerOptions: this.getProviderOptions(),
     });
+
+    // Listen to storage event
+    window.addEventListener("storage", (e) => this.storageChanged(e));
+
+    // Bind this to storageChanged()
+    this.storageChanged = this.storageChanged.bind(this);
+  }
+
+  // Listens for the change in the wally authentication token in the local storage
+  storageChanged(e: StorageEvent) {
+    if (e.key === `wally:${this.state.wallyClientId}:token`) {
+      window.location.reload();
+    }
   }
 
   public componentDidMount() {
@@ -189,29 +203,25 @@ class App extends React.Component<any, any> {
   }
 
   public onConnect = async () => {
-    if (this.web3Modal.cachedProvider === "custom-wallyconnect") {
-      console.log("Wally is true");
-      const provider = await this.web3Modal.connect();
+    const provider = await this.web3Modal.connect();
 
-      console.log("provider---->", provider);
+    // listens for the wally provider to be connected
+    if (this.web3Modal.cachedProvider === "custom-wallyconnect") {
+      this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
 
       await provider.requestAccounts();
 
       const web3: any = initWeb3(provider);
-      console.log("web3---->", web3);
 
       const accounts = await web3.eth._provider.selectedAddress;
-      console.log("accounts---->", accounts);
 
       const address = accounts;
 
+      // Needs to be included in the SDK to get the networkId and chainId
       const networkId = 1;
-      // await web3.eth.net.getId();
-
       const chainId = 1;
-      // await web3.eth.chainId();
 
       await this.setState({
         web3,
@@ -224,29 +234,19 @@ class App extends React.Component<any, any> {
 
       await this.getAccountAssets();
     } else {
-      console.log("Wally is false");
-      const provider = await this.web3Modal.connect();
-
-      console.log("provider---->", provider);
-
       await this.subscribeProvider(provider);
 
       await provider.enable();
       const web3: any = initWeb3(provider);
-      console.log("web3---->", web3);
 
       const accounts = await web3.eth.getAccounts().catch((err: any) => {
         console.log("getAccounts err:", err);
       });
-      console.log("accounts---->", accounts);
 
       const address = accounts[0];
 
       const networkId = await web3.eth.net.getId();
-      console.log("networkId---->", networkId);
-
       const chainId = await web3.eth.chainId();
-      console.log("chainId---->", chainId);
 
       await this.setState({
         web3,
@@ -330,13 +330,6 @@ class App extends React.Component<any, any> {
           options: any
         ) => {
           const provider = new ProviderPackage(options);
-
-          init({
-            clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b",
-          });
-
-          await provider.requestAccounts();
-
           return provider;
         },
       },
@@ -365,8 +358,9 @@ class App extends React.Component<any, any> {
     }
   };
 
-  public toggleModal = () =>
+  public toggleModal = () => {
     this.setState({ showModal: !this.state.showModal });
+  };
 
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
