@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import Web3 from "web3";
+import React from "react";
 
 import { handleRedirect, init } from "web3modal/src/sdk";
 
