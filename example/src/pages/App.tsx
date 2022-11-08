@@ -31,7 +31,7 @@ import {
   recoverPublicKey,
   recoverPersonalSignature,
   formatTestTransaction,
-  getChainData,
+  getChainData
 } from "../helpers/utilities";
 import { IAssetData } from "../helpers/types";
 import { fonts } from "../styles";
@@ -40,7 +40,7 @@ import {
   ETH_SIGN,
   PERSONAL_SIGN,
   DAI_BALANCE_OF,
-  DAI_TRANSFER,
+  DAI_TRANSFER
 } from "../constants";
 import { callBalanceOf, callTransfer } from "../helpers/web3";
 
@@ -140,7 +140,7 @@ const INITIAL_STATE: IAppState = {
   showModal: false,
   pendingRequest: false,
   result: null,
-  wallyClientId: "",
+  wallyClientId: ""
 };
 
 function initWeb3(provider: any) {
@@ -151,9 +151,9 @@ function initWeb3(provider: any) {
       {
         name: "chainId",
         call: "eth_chainId",
-        outputFormatter: web3.utils.hexToNumber,
-      },
-    ],
+        outputFormatter: web3.utils.hexToNumber
+      }
+    ]
   });
 
   return web3;
@@ -167,17 +167,17 @@ class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      ...INITIAL_STATE,
+      ...INITIAL_STATE
     };
 
     this.web3Modal = new Web3Modal({
       network: this.getNetwork(),
       cacheProvider: true,
-      providerOptions: this.getProviderOptions(),
+      providerOptions: this.getProviderOptions()
     });
 
     // Listen to storage event
-    window.addEventListener("storage", (e) => this.storageChanged(e));
+    window.addEventListener("storage", e => this.storageChanged(e));
 
     // Bind this to storageChanged()
     this.storageChanged = this.storageChanged.bind(this);
@@ -225,7 +225,7 @@ class App extends React.Component<any, any> {
         connected: true,
         address,
         chainId,
-        networkId,
+        networkId
       });
 
       await this.getAccountAssets();
@@ -249,7 +249,7 @@ class App extends React.Component<any, any> {
         connected: true,
         address,
         chainId,
-        networkId,
+        networkId
       });
 
       await this.getAccountAssets();
@@ -284,40 +284,23 @@ class App extends React.Component<any, any> {
 
   public getProviderOptions = () => {
     const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
-
     const providerOptions = {
-      walletconnect: {
-        package: WalletConnect,
-        options: {
-          infuraId,
-        },
-      },
       coinbasewallet: {
         package: CoinbaseWalletSDK,
         options: {
           appName: "Web3Modal Example App",
-          infuraId,
-        },
+          infuraId
+        }
       },
-
-      // wallyconnect: {
-      //   package: WallyConnector, // required
-      //   options: {
-      //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
-      //     isDevelopment: false,
-      //     devUrl: "http://localhost:3000", // optional
-      //   },
-      // },
-
       "custom-wallyconnect": {
         display: {
           logo: wallylogo,
           name: "WallyConnect",
-          description: "Connect to Wally",
+          description: "Connect to Wally"
         },
         options: {
           clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
-          didHandleRedirect: true,
+          didHandleRedirect: true
         },
         package: WallyConnector, // required
         connector: async (
@@ -326,14 +309,8 @@ class App extends React.Component<any, any> {
         ) => {
           const provider = new ProviderPackage(options);
           return provider;
-        },
-      },
-      mewconnect: {
-        package: MewConnect, // required
-        options: {
-          infuraId,
-        },
-      },
+        }
+      }
     };
 
     return providerOptions;
@@ -392,14 +369,14 @@ class App extends React.Component<any, any> {
         txHash: result,
         from: address,
         to: address,
-        value: "0 ETH",
+        value: "0 ETH"
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null,
+        result: formattedResult || null
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -440,14 +417,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result,
+        result
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null,
+        result: formattedResult || null
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -488,14 +465,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result,
+        result
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null,
+        result: formattedResult || null
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -537,14 +514,14 @@ class App extends React.Component<any, any> {
       // format displayed result
       const formattedResult = {
         action: functionSig,
-        result,
+        result
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null,
+        result: formattedResult || null
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -570,7 +547,7 @@ class App extends React.Component<any, any> {
       fetching,
       showModal,
       pendingRequest,
-      result,
+      result
     } = this.state;
     return (
       <SLayout>
