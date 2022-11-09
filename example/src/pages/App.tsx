@@ -209,15 +209,25 @@ class App extends React.Component<any, any> {
       this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
-      await provider.requestAccounts();
+      await provider.request({ method: "eth_requestAccounts" });
 
       const web3: any = initWeb3(provider);
-      const accounts = await web3.eth._provider.selectedAddress;
+      const accounts = await web3.eth.currentProvider.selectedAddress;
+
+      console.log("web3:", web3);
       const address = accounts;
 
-      // Needs to be included in the SDK to get the networkId and chainId
-      const networkId = 1;
-      const chainId = 1;
+      // const networkId = await web3.eth.net.getId();
+      // const chainId = await web3.eth.chainId();
+
+      // console.log("networkId:", networkId);
+      // console.log("chainId:", chainId);
+
+      // At the moment the provider doesn't supply the networkid or chainid.
+      // TODO: Change thia to collect via the provider
+
+      const networkId = 5;
+      const chainId = 5;
 
       await this.setState({
         web3,
