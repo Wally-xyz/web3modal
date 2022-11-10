@@ -222,6 +222,8 @@ class App extends React.Component<any, any> {
       console.log("web3:", web3);
       const address = accounts;
 
+      console.log("address:", address);
+
       // const networkId2 = await web3.eth.net.getId();
       // const chainId2 = await web3.eth.chainId();
 
@@ -231,8 +233,35 @@ class App extends React.Component<any, any> {
       // At the moment the provider doesn't supply the networkid or chainid.
       // TODO: Change thia to collect via the provider
 
-      const networkId = 5;
-      const chainId = 5;
+      // const bearerToken = localStorage.getItem(
+      //   `wally:${this.state.wallyClientId}:token`
+      // );
+
+      const bearerToken = "";
+      const resp = await fetch(`http://localhost:8888/v1/app`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${bearerToken}`
+        }
+      });
+
+      const data = await resp.text();
+      console.log(JSON.parse(data).environment);
+
+      const wallyEnvironment = JSON.parse(data).environment;
+
+      const networkTypes = [
+        { id: 1, name: "mainnet", wallyEnvironment: "ETHEREUM" },
+        { id: 5, name: "goerli", wallyEnvironment: "ETHEREUM_GOERLI" }
+      ];
+
+      const networkId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
+
+      const chainId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
 
       await this.setState({
         web3,
@@ -364,15 +393,46 @@ class App extends React.Component<any, any> {
 
       // toggle pending request indicator
       this.setState({ pendingRequest: true });
+      const id = this.state.wallyClientId;
 
       // @ts-ignore
-      function sendTransaction(_tx: any) {
-        return new Promise((resolve, reject) => {
-          web3.eth
-            .sendTransaction(_tx)
-            .once("transactionHash", (txHash: string) => resolve(txHash))
-            .catch((err: any) => reject(err));
-        });
+      async function sendTransaction(_tx: any) {
+        // return new Promise((resolve, reject) => {
+        //   web3.eth.sendTransaction(_tx);
+        //   .once("transactionHash", (txHash: string) => resolve(txHash))
+        //   .catch((err: any) => reject(err));
+        // });
+
+        const bearerToken = "";
+
+        const resp = await fetch(
+          `https://api.wally.xyz/v1/wallet/${id}/send-transaction`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${bearerToken}`
+            },
+            body: JSON.stringify({
+              to: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
+              from: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
+              nonce: 0,
+              gasLimit: 0,
+              gasPrice: 10,
+              data: "string",
+              value: 0,
+              chainId: 5,
+              type: 0,
+              maxPriorityFeePerGas: 0,
+              maxFeePerGas: 0,
+              customData: {},
+              ccipReadEnabled: true
+            })
+          }
+        );
+
+        const data = await resp.json();
+        console.log(data);
       }
 
       // send transaction
@@ -420,7 +480,7 @@ class App extends React.Component<any, any> {
       this.setState({ pendingRequest: true });
 
       // send message
-      const result = await web3.eth.sign(hash, address);
+      const result = await web3.eth.sign(message, address);
 
       // verify signature
       const signer = recoverPublicKey(result, hash);
