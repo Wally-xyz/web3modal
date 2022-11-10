@@ -209,19 +209,24 @@ class App extends React.Component<any, any> {
       this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
-      await provider.request({ method: "eth_requestAccounts" });
+      console.log(
+        "Test provider methods"
+        // await provider.request({ method: "personal_sign" })
+      );
 
       const web3: any = initWeb3(provider);
+      await web3.eth.requestAccounts();
+
       const accounts = await web3.eth.currentProvider.selectedAddress;
 
       console.log("web3:", web3);
       const address = accounts;
 
-      // const networkId = await web3.eth.net.getId();
-      // const chainId = await web3.eth.chainId();
+      // const networkId2 = await web3.eth.net.getId();
+      // const chainId2 = await web3.eth.chainId();
 
-      // console.log("networkId:", networkId);
-      // console.log("chainId:", chainId);
+      // console.log("networkId:", networkId2);
+      // console.log("chainId:", chainId2);
 
       // At the moment the provider doesn't supply the networkid or chainid.
       // TODO: Change thia to collect via the provider
@@ -309,7 +314,7 @@ class App extends React.Component<any, any> {
           description: "Connect to Wally"
         },
         options: {
-          clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
+          clientId: "d24d0722-8f62-4fa3-bb7f-dea225931a9a", // required
           didHandleRedirect: true
         },
         package: WallyConnector, // required
