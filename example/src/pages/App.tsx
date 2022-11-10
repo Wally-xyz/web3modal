@@ -237,7 +237,10 @@ class App extends React.Component<any, any> {
       //   `wally:${this.state.wallyClientId}:token`
       // );
 
-      const bearerToken = "";
+      // TEMPORARY FIX
+
+      const bearerToken =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
       const resp = await fetch(`http://localhost:8888/v1/app`, {
         method: "GET",
         headers: {
@@ -403,8 +406,10 @@ class App extends React.Component<any, any> {
         //   .catch((err: any) => reject(err));
         // });
 
-        const bearerToken = "";
+        // TEMPORARY FIX
 
+        const bearerToken =
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
         const resp = await fetch(
           `https://api.wally.xyz/v1/wallet/${id}/send-transaction`,
           {
