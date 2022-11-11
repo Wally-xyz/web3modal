@@ -5,15 +5,13 @@ import { convertUtf8ToHex } from "@walletconnect/utils";
 // @ts-ignore
 import Web3Modal from "web3modal";
 // @ts-ignore
-import WalletConnect from "@walletconnect/web3-provider";
-// @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
-// @ts-ignore
-import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
 import WallyConnector from "web3modal/src/sdk/wally-connector";
 
 import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import dotenv from "dotenv";
 
 import Button from "../components/Button";
 import Column from "../components/Column";
@@ -209,20 +207,12 @@ class App extends React.Component<any, any> {
       this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
-      console.log(
-        "Test provider methods"
-        // await provider.request({ method: "personal_sign" })
-      );
 
       const web3: any = initWeb3(provider);
       await web3.eth.requestAccounts();
 
       const accounts = await web3.eth.currentProvider.selectedAddress;
-
-      console.log("web3:", web3);
       const address = accounts;
-
-      console.log("address:", address);
 
       // const networkId2 = await web3.eth.net.getId();
       // const chainId2 = await web3.eth.chainId();
@@ -233,14 +223,9 @@ class App extends React.Component<any, any> {
       // At the moment the provider doesn't supply the networkid or chainid.
       // TODO: Change thia to collect via the provider
 
-      // const bearerToken = localStorage.getItem(
-      //   `wally:${this.state.wallyClientId}:token`
-      // );
-
       // TEMPORARY FIX
 
-      const bearerToken =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
+      const bearerToken = process.env.REACT_APP_WALLY_TOKEN;
       const resp = await fetch(`http://localhost:8888/v1/app`, {
         method: "GET",
         headers: {
@@ -330,7 +315,9 @@ class App extends React.Component<any, any> {
   public getNetwork = () => getChainData(this.state.chainId).network;
 
   public getProviderOptions = () => {
-    const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
+    const infuraId = process.env.REACT_APP_INFURA_API;
+    const wallyClientId = process.env.REACT_APP_WALLY_CLIENT_ID;
+
     const providerOptions = {
       coinbasewallet: {
         package: CoinbaseWalletSDK,
@@ -346,7 +333,7 @@ class App extends React.Component<any, any> {
           description: "Connect to Wally"
         },
         options: {
-          clientId: "d24d0722-8f62-4fa3-bb7f-dea225931a9a", // required
+          clientId: wallyClientId, // required
           didHandleRedirect: true
         },
         package: WallyConnector, // required
@@ -383,6 +370,7 @@ class App extends React.Component<any, any> {
 
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
+    const provider = await this.web3Modal.connect();
 
     if (!web3) {
       return;
@@ -396,52 +384,68 @@ class App extends React.Component<any, any> {
 
       // toggle pending request indicator
       this.setState({ pendingRequest: true });
-      const id = this.state.wallyClientId;
 
       // @ts-ignore
       async function sendTransaction(_tx: any) {
+        // console.log("sendTransaction:", _tx);
+
+        await provider.request({
+          method: "eth_sendTransaction",
+          params: [
+            _tx.from,
+            _tx.to,
+            _tx.nonce,
+            _tx.gasPrice,
+            _tx.gasLimit,
+            _tx.value,
+            _tx.data
+          ]
+        });
         // return new Promise((resolve, reject) => {
-        //   web3.eth.sendTransaction(_tx);
-        //   .once("transactionHash", (txHash: string) => resolve(txHash))
-        //   .catch((err: any) => reject(err));
+        //   web3.eth
+        //     .sendTransaction(_tx)
+        //     .once("transactionHash", (txHash: string) => resolve(txHash))
+        //     .catch((err: any) => reject(err));
         // });
 
         // TEMPORARY FIX
 
-        const bearerToken =
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
-        const resp = await fetch(
-          `https://api.wally.xyz/v1/wallet/${id}/send-transaction`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${bearerToken}`
-            },
-            body: JSON.stringify({
-              to: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
-              from: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
-              nonce: 0,
-              gasLimit: 0,
-              gasPrice: 10,
-              data: "string",
-              value: 0,
-              chainId: 5,
-              type: 0,
-              maxPriorityFeePerGas: 0,
-              maxFeePerGas: 0,
-              customData: {},
-              ccipReadEnabled: true
-            })
-          }
-        );
+        // const bearerToken =
+        //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
+        // const resp = await fetch(
+        //   `https://api.wally.xyz/v1/wallet/${id}/send-transaction`,
+        //   {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json",
+        //       Authorization: `Bearer ${bearerToken}`
+        //     },
+        //     body: JSON.stringify({
+        //       to: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
+        //       from: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
+        //       nonce: 0,
+        //       gasLimit: 0,
+        //       gasPrice: 10,
+        //       data: "string",
+        //       value: 0,
+        //       chainId: 5,
+        //       type: 0,
+        //       maxPriorityFeePerGas: 0,
+        //       maxFeePerGas: 0,
+        //       customData: {},
+        //       ccipReadEnabled: true
+        //     })
+        //   }
+        // );
 
-        const data = await resp.json();
-        console.log(data);
+        // const data = await resp.json();
+        // console.log(data);
       }
 
       // send transaction
       const result = await sendTransaction(tx);
+
+      console.log(result);
 
       // format displayed result
       const formattedResult = {
@@ -660,19 +664,6 @@ class App extends React.Component<any, any> {
 
                     <STestButton left onClick={this.testSignPersonalMessage}>
                       {PERSONAL_SIGN}
-                    </STestButton>
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_BALANCE_OF)}
-                    >
-                      {DAI_BALANCE_OF}
-                    </STestButton>
-
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_TRANSFER)}
-                    >
-                      {DAI_TRANSFER}
                     </STestButton>
                   </STestButtonContainer>
                 </Column>
