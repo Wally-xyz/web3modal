@@ -195,7 +195,8 @@ export async function formatTestTransaction(address: string, chainId: number) {
     gasPrice,
     gasLimit,
     value,
-    data
+    data,
+    chainId: chainId
   };
 
   return tx;
