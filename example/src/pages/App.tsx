@@ -214,19 +214,9 @@ class App extends React.Component<any, any> {
       const accounts = await web3.eth.currentProvider.selectedAddress;
       const address = accounts;
 
-      // const networkId2 = await web3.eth.net.getId();
-      // const chainId2 = await web3.eth.chainId();
-
-      // console.log("networkId:", networkId2);
-      // console.log("chainId:", chainId2);
-
-      // At the moment the provider doesn't supply the networkid or chainid.
-      // TODO: Change thia to collect via the provider
-
-      // TEMPORARY FIX
-
       const bearerToken = process.env.REACT_APP_WALLY_TOKEN;
-      const resp = await fetch(`http://localhost:8888/v1/app`, {
+      const host = process.env.REACT_APP_WALLY_HOST;
+      const resp = await fetch(`${host}/app`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${bearerToken}`
@@ -371,6 +361,7 @@ class App extends React.Component<any, any> {
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
     const provider = await this.web3Modal.connect();
+    const providerCached = this.web3Modal.cachedProvider;
 
     if (!web3) {
       return;
@@ -386,60 +377,29 @@ class App extends React.Component<any, any> {
       this.setState({ pendingRequest: true });
 
       // @ts-ignore
-      async function sendTransaction(_tx: any) {
-        // console.log("sendTransaction:", _tx);
-
-        await provider.request({
-          method: "eth_sendTransaction",
-          params: [
-            _tx.from,
-            _tx.to,
-            _tx.nonce,
-            _tx.gasPrice,
-            _tx.gasLimit,
-            _tx.value,
-            _tx.data
-          ]
-        });
-        // return new Promise((resolve, reject) => {
-        //   web3.eth
-        //     .sendTransaction(_tx)
-        //     .once("transactionHash", (txHash: string) => resolve(txHash))
-        //     .catch((err: any) => reject(err));
-        // });
-
-        // TEMPORARY FIX
-
-        // const bearerToken =
-        //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4MWJlM2VlMi03NGFlLTRlNGQtOWJkNy02NjRlZmVlZDlkNDAiLCJ1c2VybmFtZSI6InRlc3QiLCJpYXQiOjE2NjgwOTk0NDV9.OXN4ojM6Du8NIHkT68Ik5dBJE7blAQlm5mz-GhJWXNM";
-        // const resp = await fetch(
-        //   `https://api.wally.xyz/v1/wallet/${id}/send-transaction`,
-        //   {
-        //     method: "POST",
-        //     headers: {
-        //       "Content-Type": "application/json",
-        //       Authorization: `Bearer ${bearerToken}`
-        //     },
-        //     body: JSON.stringify({
-        //       to: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
-        //       from: "0xeB363A3B82339f149ae076bAa3A45b58B0FBd7DD",
-        //       nonce: 0,
-        //       gasLimit: 0,
-        //       gasPrice: 10,
-        //       data: "string",
-        //       value: 0,
-        //       chainId: 5,
-        //       type: 0,
-        //       maxPriorityFeePerGas: 0,
-        //       maxFeePerGas: 0,
-        //       customData: {},
-        //       ccipReadEnabled: true
-        //     })
-        //   }
-        // );
-
-        // const data = await resp.json();
-        // console.log(data);
+      function sendTransaction(_tx: any) {
+        if (providerCached === "custom-wallyconnect") {
+          return new Promise((resolve, reject) => {
+            provider
+              .request({
+                method: "eth_sendTransaction",
+                params: [_tx]
+              })
+              .then((result: any) => {
+                resolve(result);
+              })
+              .catch((err: any) => {
+                reject(err);
+              });
+          });
+        } else {
+          return new Promise((resolve, reject) => {
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (txHash: string) => resolve(txHash))
+              .catch((err: any) => reject(err));
+          });
+        }
       }
 
       // send transaction
