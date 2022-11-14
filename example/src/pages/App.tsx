@@ -323,8 +323,7 @@ class App extends React.Component<any, any> {
           description: "Connect to Wally"
         },
         options: {
-          clientId: wallyClientId, // required
-          didHandleRedirect: true
+          clientId: wallyClientId // required
         },
         package: WallyConnector, // required
         connector: async (
@@ -404,8 +403,6 @@ class App extends React.Component<any, any> {
 
       // send transaction
       const result = await sendTransaction(tx);
-
-      console.log(result);
 
       // format displayed result
       const formattedResult = {
