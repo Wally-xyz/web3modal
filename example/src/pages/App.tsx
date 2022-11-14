@@ -359,7 +359,6 @@ class App extends React.Component<any, any> {
 
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
-    const provider = await this.web3Modal.connect();
     const providerCached = this.web3Modal.cachedProvider;
 
     if (!web3) {
