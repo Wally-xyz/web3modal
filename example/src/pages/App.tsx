@@ -367,6 +367,7 @@ class App extends React.Component<any, any> {
     }
 
     const tx = await formatTestTransaction(address, chainId);
+    console.log("web3", web3);
 
     try {
       // open modal
@@ -379,17 +380,10 @@ class App extends React.Component<any, any> {
       function sendTransaction(_tx: any) {
         if (providerCached === "custom-wallyconnect") {
           return new Promise((resolve, reject) => {
-            provider
-              .request({
-                method: "eth_sendTransaction",
-                params: [_tx]
-              })
-              .then((result: any) => {
-                resolve(result);
-              })
-              .catch((err: any) => {
-                reject(err);
-              });
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (result: any) => resolve(result))
+              .catch((err: any) => reject(err));
           });
         } else {
           return new Promise((resolve, reject) => {
