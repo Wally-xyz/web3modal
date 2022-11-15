@@ -7,11 +7,13 @@ import Web3Modal from "web3modal";
 // @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
-import WallyConnector from "web3modal/src/sdk/wally-connector";
+import MewConnect from "@myetherwallet/mewconnect-web-client";
+// @ts-ignore
+import WalletConnect from "@walletconnect/web3-provider";
+// @ts-ignore
+import WallyConnector from "wally-sdk/dist/wally-connector";
 
 import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import dotenv from "dotenv";
 
 import Button from "../components/Button";
 import Column from "../components/Column";
@@ -29,7 +31,7 @@ import {
   recoverPublicKey,
   recoverPersonalSignature,
   formatTestTransaction,
-  getChainData
+  getChainData,
 } from "../helpers/utilities";
 import { IAssetData } from "../helpers/types";
 import { fonts } from "../styles";
@@ -38,7 +40,7 @@ import {
   ETH_SIGN,
   PERSONAL_SIGN,
   DAI_BALANCE_OF,
-  DAI_TRANSFER
+  DAI_TRANSFER,
 } from "../constants";
 import { callBalanceOf, callTransfer } from "../helpers/web3";
 
@@ -138,7 +140,7 @@ const INITIAL_STATE: IAppState = {
   showModal: false,
   pendingRequest: false,
   result: null,
-  wallyClientId: ""
+  wallyClientId: "",
 };
 
 function initWeb3(provider: any) {
@@ -149,9 +151,9 @@ function initWeb3(provider: any) {
       {
         name: "chainId",
         call: "eth_chainId",
-        outputFormatter: web3.utils.hexToNumber
-      }
-    ]
+        outputFormatter: web3.utils.hexToNumber,
+      },
+    ],
   });
 
   return web3;
@@ -165,13 +167,13 @@ class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
     this.state = {
-      ...INITIAL_STATE
+      ...INITIAL_STATE,
     };
 
     this.web3Modal = new Web3Modal({
       network: this.getNetwork(),
       cacheProvider: true,
-      providerOptions: this.getProviderOptions()
+      providerOptions: this.getProviderOptions(),
     });
 
     // Listen to storage event
@@ -219,8 +221,8 @@ class App extends React.Component<any, any> {
       const resp = await fetch(`${host}/app`, {
         method: "GET",
         headers: {
-          Authorization: `Bearer ${bearerToken}`
-        }
+          Authorization: `Bearer ${bearerToken}`,
+        },
       });
 
       const data = await resp.text();
@@ -230,7 +232,7 @@ class App extends React.Component<any, any> {
 
       const networkTypes = [
         { id: 1, name: "mainnet", wallyEnvironment: "ETHEREUM" },
-        { id: 5, name: "goerli", wallyEnvironment: "ETHEREUM_GOERLI" }
+        { id: 5, name: "goerli", wallyEnvironment: "ETHEREUM_GOERLI" },
       ];
 
       const networkId = networkTypes.find(
@@ -247,7 +249,7 @@ class App extends React.Component<any, any> {
         connected: true,
         address,
         chainId,
-        networkId
+        networkId,
       });
 
       await this.getAccountAssets();
@@ -271,7 +273,7 @@ class App extends React.Component<any, any> {
         connected: true,
         address,
         chainId,
-        networkId
+        networkId,
       });
 
       await this.getAccountAssets();
@@ -313,17 +315,29 @@ class App extends React.Component<any, any> {
         package: CoinbaseWalletSDK,
         options: {
           appName: "Web3Modal Example App",
-          infuraId
-        }
+          infuraId,
+        },
+      },
+      walletconnect: {
+        package: WalletConnect,
+        options: {
+          infuraId,
+        },
+      },
+      mewconnect: {
+        package: MewConnect, // required
+        options: {
+          infuraId,
+        },
       },
       "custom-wallyconnect": {
         display: {
           logo: wallylogo,
           name: "WallyConnect",
-          description: "Connect to Wally"
+          description: "Connect to Wally",
         },
         options: {
-          clientId: wallyClientId // required
+          clientId: wallyClientId, // required
         },
         package: WallyConnector, // required
         connector: async (
@@ -332,8 +346,8 @@ class App extends React.Component<any, any> {
         ) => {
           const provider = new ProviderPackage(options);
           return provider;
-        }
-      }
+        },
+      },
     };
 
     return providerOptions;
@@ -403,14 +417,14 @@ class App extends React.Component<any, any> {
         txHash: result,
         from: address,
         to: address,
-        value: "0 ETH"
+        value: "0 ETH",
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -451,14 +465,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -499,14 +513,14 @@ class App extends React.Component<any, any> {
         address,
         signer,
         verified,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -548,14 +562,14 @@ class App extends React.Component<any, any> {
       // format displayed result
       const formattedResult = {
         action: functionSig,
-        result
+        result,
       };
 
       // display result
       this.setState({
         web3,
         pendingRequest: false,
-        result: formattedResult || null
+        result: formattedResult || null,
       });
     } catch (error) {
       console.error(error); // tslint:disable-line
@@ -581,7 +595,7 @@ class App extends React.Component<any, any> {
       fetching,
       showModal,
       pendingRequest,
-      result
+      result,
     } = this.state;
     return (
       <SLayout>
