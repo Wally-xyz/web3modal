@@ -1,13 +1,11 @@
 import React from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import dotenv from "dotenv";
 
-import { handleRedirect, init } from "web3modal/src/sdk";
+import { handleRedirect } from "wally-sdk";
 
 const HandleRedirect: React.FC = () => {
   if (typeof window !== "undefined") {
-    init({
-      clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b",
-    });
-
     handleRedirect({
       closeWindow: true,
       appendContent: true,

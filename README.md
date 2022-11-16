@@ -1,45 +1,18 @@
-# Web3Modal
+# Web3Modal + Wally
 
-A single Web3 / Ethereum provider solution for all Wallets
+A single Web3 / Ethereum provider solution with support for wally
 
 ## Introduction
 
 Web3Modal is an easy-to-use library to help developers add support for multiple providers in their apps with a simple customizable configuration.
 
-By default Web3Modal Library supports injected providers like ( **Metamask**,**Brave Wallet**, **Dapper**, **Frame**, **Gnosis Safe**, **Tally**, Web3 Browsers, etc) and **WalletConnect**. You can also easily configure the library to support **Coinbase Wallet**, **Torus**, **Portis**, **Fortmatic** and many more.
+By default Web3Modal Library supports injected providers like ( **Metamask**,**Brave Wallet**, **Dapper**, **Frame**, **Gnosis Safe**, **Tally**, Web3 Browsers, etc) and **WalletConnect**. This library supports **Wally**, **Torus**, **Portis**, **Fortmatic** and many more.
 
 ## Preview
 
 You can test the library on: https://web3modal.com/
 
-![preview](./images/preview.png)
-
-## Projects using `web3modal`
-
-_Open a PR to add your project to the list!_
-
-- [DAO Stack](https://alchemy.daostack.io/)
-- [Gnosis Safe](https://gnosis-safe.io/)
-- [3Box Hub](https://3box.io/hub/)
-- [KnownOrigin](https://knownorigin.io/)
-- [Clovers Network](https://clovers.network/)
-- [Affogato](https://affogato.co/)
-- [Linkdrop](https://dashboard.linkdrop.io/)
-- [Dapparatus](https://github.com/austintgriffith/dapparatus/)
-- [Totle Swap](https://swap.totle.com/)
-- [Win Or Lose](https://www.winorlose.live/)
-- [HODLbag NFT](https://hodlbag.org/)
-- [Forever in Ether](https://ineth.net/)
-- [Civilization](https://app.civfund.org/)
-- [OlympusDAO](https://app.olympusdao.finance/)
-- [The Unit](https://app.theunit.one/)
-- [Sign-in with Ethereum](https://login.xyz/)
-- [AngularWeb3Boilerplate](https://github.com/AntonioCardenas/AngularWeb3Boilerplate)
-- [BalconyDAO](https://balconydao.com/)
-- [LearnWeb3 DAO](https://learnweb3.io/)
-- [The Miners Comic](https://theminersnft.com/)
-- [Sealcred](https://sealcred.xyz/)
-- etc
+- [Wally](https://wally.app) - The easiest way to use Ethereum
 
 ## Related Efforts
 
@@ -105,6 +78,7 @@ const instance = await web3Modal.connect();
 const provider = new ethers.providers.Web3Provider(instance);
 const signer = provider.getSigner();
 ```
+
 Here's a live example on [Codesandbox.io](https://codesandbox.io/s/j43b10)
 
 ## Using with [Vite](https://github.com/vitejs/vite)

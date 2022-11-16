@@ -5,13 +5,13 @@ import { convertUtf8ToHex } from "@walletconnect/utils";
 // @ts-ignore
 import Web3Modal from "web3modal";
 // @ts-ignore
-import WalletConnect from "@walletconnect/web3-provider";
-// @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
 import MewConnect from "@myetherwallet/mewconnect-web-client";
 // @ts-ignore
-import WallyConnector from "web3modal/src/sdk/wally-connector";
+import WalletConnect from "@walletconnect/web3-provider";
+// @ts-ignore
+import WallyConnector from "wally-sdk/dist/wally-connector";
 
 import wallylogo from "../../node_modules/web3modal/src/providers/logos/wallyconnect.png";
 
@@ -177,7 +177,7 @@ class App extends React.Component<any, any> {
     });
 
     // Listen to storage event
-    window.addEventListener("storage", (e) => this.storageChanged(e));
+    window.addEventListener("storage", e => this.storageChanged(e));
 
     // Bind this to storageChanged()
     this.storageChanged = this.storageChanged.bind(this);
@@ -209,15 +209,38 @@ class App extends React.Component<any, any> {
       this.setState({ wallyClientId: provider.clientId });
 
       await this.subscribeProvider(provider);
-      await provider.requestAccounts();
 
       const web3: any = initWeb3(provider);
-      const accounts = await web3.eth._provider.selectedAddress;
-      const address = accounts;
+      await web3.eth.requestAccounts();
 
-      // Needs to be included in the SDK to get the networkId and chainId
-      const networkId = 1;
-      const chainId = 1;
+      const address = await web3.eth.currentProvider.selectedAddress;
+
+      const bearerToken = process.env.REACT_APP_WALLY_TOKEN;
+      const host = process.env.REACT_APP_WALLY_HOST;
+      const resp = await fetch(`${host}/app`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${bearerToken}`,
+        },
+      });
+
+      const data = await resp.text();
+      console.log(JSON.parse(data).environment);
+
+      const wallyEnvironment = JSON.parse(data).environment;
+
+      const networkTypes = [
+        { id: 1, name: "mainnet", wallyEnvironment: "ETHEREUM" },
+        { id: 5, name: "goerli", wallyEnvironment: "ETHEREUM_GOERLI" },
+      ];
+
+      const networkId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
+
+      const chainId = networkTypes.find(
+        network => network.wallyEnvironment === wallyEnvironment
+      )?.id;
 
       await this.setState({
         web3,
@@ -283,15 +306,10 @@ class App extends React.Component<any, any> {
   public getNetwork = () => getChainData(this.state.chainId).network;
 
   public getProviderOptions = () => {
-    const infuraId = "e8ceeaaa4eaa447fa137b1b2f8b6b0a2";
+    const infuraId = process.env.REACT_APP_INFURA_API;
+    const wallyClientId = process.env.REACT_APP_WALLY_CLIENT_ID;
 
     const providerOptions = {
-      walletconnect: {
-        package: WalletConnect,
-        options: {
-          infuraId,
-        },
-      },
       coinbasewallet: {
         package: CoinbaseWalletSDK,
         options: {
@@ -299,16 +317,18 @@ class App extends React.Component<any, any> {
           infuraId,
         },
       },
-
-      // wallyconnect: {
-      //   package: WallyConnector, // required
-      //   options: {
-      //     clientId: "103be027-a1a6-486c-ae24-0d19909b36d4", // required
-      //     isDevelopment: false,
-      //     devUrl: "http://localhost:3000", // optional
-      //   },
-      // },
-
+      walletconnect: {
+        package: WalletConnect,
+        options: {
+          infuraId,
+        },
+      },
+      mewconnect: {
+        package: MewConnect, // required
+        options: {
+          infuraId,
+        },
+      },
       "custom-wallyconnect": {
         display: {
           logo: wallylogo,
@@ -316,8 +336,7 @@ class App extends React.Component<any, any> {
           description: "Connect to Wally",
         },
         options: {
-          clientId: "15672a04-5ce6-48ff-991c-54ab200bdd5b", // required
-          didHandleRedirect: true,
+          clientId: wallyClientId, // required
         },
         package: WallyConnector, // required
         connector: async (
@@ -326,12 +345,6 @@ class App extends React.Component<any, any> {
         ) => {
           const provider = new ProviderPackage(options);
           return provider;
-        },
-      },
-      mewconnect: {
-        package: MewConnect, // required
-        options: {
-          infuraId,
         },
       },
     };
@@ -359,12 +372,14 @@ class App extends React.Component<any, any> {
 
   public testSendTransaction = async () => {
     const { web3, address, chainId } = this.state;
+    const providerCached = this.web3Modal.cachedProvider;
 
     if (!web3) {
       return;
     }
 
     const tx = await formatTestTransaction(address, chainId);
+    console.log("web3", web3);
 
     try {
       // open modal
@@ -375,12 +390,21 @@ class App extends React.Component<any, any> {
 
       // @ts-ignore
       function sendTransaction(_tx: any) {
-        return new Promise((resolve, reject) => {
-          web3.eth
-            .sendTransaction(_tx)
-            .once("transactionHash", (txHash: string) => resolve(txHash))
-            .catch((err: any) => reject(err));
-        });
+        if (providerCached === "custom-wallyconnect") {
+          return new Promise((resolve, reject) => {
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (result: any) => resolve(result))
+              .catch((err: any) => reject(err));
+          });
+        } else {
+          return new Promise((resolve, reject) => {
+            web3.eth
+              .sendTransaction(_tx)
+              .once("transactionHash", (txHash: string) => resolve(txHash))
+              .catch((err: any) => reject(err));
+          });
+        }
       }
 
       // send transaction
@@ -428,7 +452,7 @@ class App extends React.Component<any, any> {
       this.setState({ pendingRequest: true });
 
       // send message
-      const result = await web3.eth.sign(hash, address);
+      const result = await web3.eth.sign(message, address);
 
       // verify signature
       const signer = recoverPublicKey(result, hash);
@@ -603,19 +627,6 @@ class App extends React.Component<any, any> {
 
                     <STestButton left onClick={this.testSignPersonalMessage}>
                       {PERSONAL_SIGN}
-                    </STestButton>
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_BALANCE_OF)}
-                    >
-                      {DAI_BALANCE_OF}
-                    </STestButton>
-
-                    <STestButton
-                      left
-                      onClick={() => this.testContractCall(DAI_TRANSFER)}
-                    >
-                      {DAI_TRANSFER}
                     </STestButton>
                   </STestButtonContainer>
                 </Column>
