@@ -213,8 +213,7 @@ class App extends React.Component<any, any> {
       const web3: any = initWeb3(provider);
       await web3.eth.requestAccounts();
 
-      const accounts = await web3.eth.currentProvider.selectedAddress;
-      const address = accounts;
+      const address = await web3.eth.currentProvider.selectedAddress;
 
       const bearerToken = process.env.REACT_APP_WALLY_TOKEN;
       const host = process.env.REACT_APP_WALLY_HOST;
