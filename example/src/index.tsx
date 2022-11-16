@@ -6,7 +6,7 @@ import { globalStyle } from "./styles";
 import { BrowserRouter } from "react-router-dom";
 import Main from "./components/Main";
 
-import { init } from "web3modal/src/sdk";
+import { init } from "wally-sdk";
 
 const wallyClientId = process.env.REACT_APP_WALLY_CLIENT_ID;
 
