@@ -4,7 +4,7 @@ import { createGlobalStyle } from "styled-components";
 
 import { globalStyle } from "./styles";
 import { BrowserRouter } from "react-router-dom";
-import Main from "./components/Main";
+import App from "./pages/App";
 
 import { init } from "wally-sdk";
 
@@ -33,7 +33,7 @@ ReactDOM.render(
   <>
     <BrowserRouter>
       <GlobalStyle />
-      <Main />
+      <App />
     </BrowserRouter>
   </>,
   document.getElementById("root")
