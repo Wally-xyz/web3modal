@@ -10,6 +10,11 @@ import WalletConnect from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
 import { Web3Auth } from "@web3auth/web3auth";
+// @ts-ignore
+import WallyConnector from "wally-sdk/dist/wally-connector";
+import { init, getProvider } from "wally-sdk";
+
+import wallylogo from "./assets/wally.svg";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -249,6 +254,31 @@ class App extends React.Component<any, any> {
         package: Web3Auth,
         options: {
           infuraId
+        }
+      },
+      "custom-wallyconnect": {
+        display: {
+          logo: wallylogo,
+          name: "Wally",
+          description: "Sign in with email"
+        },
+        options: {
+          clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
+          verbose: true
+        },
+        package: WallyConnector, // required
+        connector: async (
+          ProviderPackage: new (arg0: any) => any,
+          options: any
+        ) => {
+          init({
+            clientId: options.clientId,
+            verbose: options.verbose,
+            redirectURL: window.location.href,
+            sharedWorkerUrl: "/worker.js",
+          });
+          const provider = getProvider();
+          return provider;
         }
       }
     };
