@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const resolve = require('resolve');
+const CopyPlugin = require('copy-webpack-plugin');
 const PnpWebpackPlugin = require('pnp-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -404,7 +405,7 @@ module.exports = function (webpackEnv) {
                     },
                   ],
                 ],
-                
+
                 plugins: [
                   [
                     require.resolve('babel-plugin-named-asset-import'),
@@ -449,7 +450,7 @@ module.exports = function (webpackEnv) {
                 cacheDirectory: true,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
-                
+
                 // Babel sourcemaps are needed for debugging into node_modules
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.
@@ -580,6 +581,18 @@ module.exports = function (webpackEnv) {
             : undefined
         )
       ),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(
+              __dirname,
+              '../node_modules/wally-sdk/dist/worker.js'
+            ),
+            // this location will likely be different for your app
+            to: path.resolve(__dirname, '../build/'),
+          },
+        ],
+      }),
       // Inlines the webpack runtime script. This script is too small to warrant
       // a network request.
       // https://github.com/facebook/create-react-app/issues/5358
