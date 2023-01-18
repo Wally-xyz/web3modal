@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Provider } from "./Provider";
+import { WallyProvider } from "./WallyProvider"
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
@@ -195,6 +196,13 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             maxWidth={userOptions.length < 3 ? 500 : 800}
             ref={c => (this.mainModalCard = c)}
           >
+            <WallyProvider
+                  name="Wally"
+                  logo=""
+                  description="Sign in or sign up with email"
+                  themeColors={themeColors}
+                  onClick={() => void}
+            />
             {userOptions.map(provider =>
               !!provider ? (
                 <Provider
