@@ -1,0 +1,1 @@
+"use strict";const _self=self;_self.ports=[];const broadcast=s=>{_self.ports.forEach((t=>t.postMessage(s.data)))};_self.onconnect=function(s){const t=s.ports[0];_self.ports.push(t),t.addEventListener("message",broadcast),t.start()};

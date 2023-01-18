@@ -259,8 +259,8 @@ class App extends React.Component<any, any> {
       "custom-wallyconnect": {
         display: {
           logo: wallylogo,
-          name: "Wally",
-          description: "Sign in with email"
+          name: "Email",
+          description: "Create wallet with email"
         },
         options: {
           clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
