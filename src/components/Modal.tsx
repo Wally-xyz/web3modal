@@ -106,7 +106,7 @@ const SModalCard = styled.div<IModalCardStyleProps>`
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
 
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: 1fr;
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "800px")};
   min-width: fit-content;
   max-height: 100%;
@@ -201,7 +201,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
                   logo=""
                   description="Sign in or sign up with email"
                   themeColors={themeColors}
-                  onClick={() => void}
+                  onClick={() => console.log("Wally was clicked.")}
             />
             {userOptions.map(provider =>
               !!provider ? (

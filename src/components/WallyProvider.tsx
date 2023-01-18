@@ -87,6 +87,36 @@ const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
   }
 `;
 
+const Input = styled.input`
+  background: transparent;
+  border: 1px solid #D3D3D3;
+  border-radius: 8px;
+  color: var(--color-text);
+  display: block;
+  font-size: 24px;
+  outline: none;
+  width: 100%;
+
+  &::placeholder {
+    color: #D3D3D3;
+  }
+`;
+
+const Submit = styled.button`
+  background: var(--color-wally-blue);
+  border: 1px solid #D3D3D3;
+  border-radius: 8px;
+  cursor: pointer;
+  color: var(--color-background);
+  cursor: pointer;
+  display: block;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 16px;
+  padding: 12px 24px;
+  transition: transform 0.15s, opacity 0.15s;
+`;
+
 interface IProviderProps {
   name: string;
   logo: string;
@@ -104,11 +134,11 @@ export function WallyProvider(props: IProviderProps) {
     onClick,
     ...otherProps
   } = props;
+  const [email, setEmail] = React.useState('');
   return (
     <SProviderWrapper
       themeColors={themeColors}
       className={PROVIDER_WRAPPER_CLASSNAME}
-      onClick={onClick}
       {...otherProps}
     >
       <SProviderContainer
@@ -127,6 +157,14 @@ export function WallyProvider(props: IProviderProps) {
         >
           {description}
         </SDescription>
+        <Input
+          placeholder="name@email.com"
+          value={email}
+          onChange={(e: React.SyntheticEvent<HTMLInputElement>) =>
+            setEmail(e.currentTarget.value)
+          }
+        />
+        <Submit disabled={!email} onClick={onClick}>Submit</Submit>
       </SProviderContainer>
     </SProviderWrapper>
   );
