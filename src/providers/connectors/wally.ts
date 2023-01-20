@@ -11,13 +11,17 @@ const ConnectToWally = async (
   WallyConnector: any,
   opts: IWallyConnectorOptions
 ) => {
-  opts._init({
+  const provider = new WallyConnector({
     clientId: opts.clientId,
     verbose: opts.verbose,
     redirectURL: window.location.href,
-    sharedWorkerUrl: "/worker.js",
+    sharedWorkerUrl: "../../helpers/worker.js"
   });
-  const provider = opts._getProvider();
+ 
+  if (provider.isRedirected()) {
+    provider.handleRedirect();
+  }
+
   return provider;
 };
 
