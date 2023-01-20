@@ -14,8 +14,6 @@ import { Web3Auth } from "@web3auth/web3auth";
 import WallyConnector from "wally-sdk/dist/wally-connector";
 import { init, getProvider } from "wally-sdk";
 
-import wallylogo from "./assets/wally.svg";
-
 import Button from "./components/Button";
 import Column from "./components/Column";
 import Wrapper from "./components/Wrapper";
@@ -256,29 +254,13 @@ class App extends React.Component<any, any> {
           infuraId
         }
       },
-      "custom-wallyconnect": {
-        display: {
-          logo: wallylogo,
-          name: "Wally",
-          description: "Sign in with email"
-        },
+      wally: {
+        package: WallyConnector, // required
         options: {
           clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
-          verbose: true
-        },
-        package: WallyConnector, // required
-        connector: async (
-          ProviderPackage: new (arg0: any) => any,
-          options: any
-        ) => {
-          init({
-            clientId: options.clientId,
-            verbose: options.verbose,
-            redirectURL: window.location.href,
-            sharedWorkerUrl: "/worker.js",
-          });
-          const provider = getProvider();
-          return provider;
+          verbose: true,
+          _init: init,
+          _getProvider: getProvider
         }
       }
     };
