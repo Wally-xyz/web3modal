@@ -17,9 +17,9 @@ const ConnectToWally = async (
     redirectURL: window.location.href,
     sharedWorkerUrl: "/worker.js"
   });
- 
+
   if (provider.isRedirected()) {
-    provider.handleRedirect();
+    await provider.handleRedirect();
   }
 
   return provider;
