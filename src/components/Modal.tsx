@@ -3,7 +3,7 @@ import * as PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Provider } from "./Provider";
-import { WallyProvider } from "./WallyProvider"
+import { WallyProvider } from "./WallyProvider";
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
@@ -179,6 +179,12 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     const { onClose, lightboxOpacity, userOptions, themeColors } = this.props;
 
+    const wallyProvider = userOptions.filter(
+      provider => provider.name === "custom-wally"
+    )[0];
+    console.log(wallyProvider);
+    console.log(userOptions);
+
     return (
       <SLightbox
         className={MODAL_LIGHTBOX_CLASSNAME}
@@ -197,11 +203,11 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             ref={c => (this.mainModalCard = c)}
           >
             <WallyProvider
-                  name="Wally"
-                  logo=""
-                  description="Sign in or sign up with email"
-                  themeColors={themeColors}
-                  onClick={() => console.log("Wally was clicked.")}
+              name="Wally"
+              logo=""
+              description="Sign in or sign up with email"
+              themeColors={themeColors}
+              onClick={() => {}}
             />
             {userOptions.map(provider =>
               !!provider ? (

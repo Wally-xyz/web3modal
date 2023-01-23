@@ -23,6 +23,7 @@ import {
   findMatchingRequiredOptions
 } from "../helpers";
 import { EventController } from "./events";
+import WallyConnector from "wally-sdk";
 
 export class ProviderController {
   public cachedProvider: string = "";
@@ -40,7 +41,16 @@ export class ProviderController {
 
     this.disableInjectedProvider = opts.disableInjectedProvider;
     this.shouldCacheProvider = opts.cacheProvider;
-    this.providerOptions = opts.providerOptions;
+    this.providerOptions = {
+      ...opts.providerOptions,
+      "custom-wally": {
+        package: WallyConnector, // required
+        options: {
+          clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
+          verbose: true
+        }
+      }
+    };
     this.network = opts.network;
 
     this.injectedProvider = getInjectedProvider();

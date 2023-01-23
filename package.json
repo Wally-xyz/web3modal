@@ -81,14 +81,13 @@
     "mocha": "5.2.0",
     "prettier": "^1.18.2",
     "terser": "^3.14.1",
-    "ts-loader": "^5.3.3",
+    "ts-loader": "^9.4.2",
     "tslib": "^2.3.1",
     "tslint": "^5.18.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
-    "typescript": "^3.1.3",
     "url-loader": "^1.1.2",
-    "webpack": "^4.44.2",
+    "webpack": "^5.75.0",
     "webpack-cli": "^3.2.1"
   },
   "dependencies": {
@@ -98,6 +97,7 @@
     "react-dom": "^16.8.6",
     "styled-components": "^5.3.3",
     "tslib": "^1.10.0",
+    "typescript": "^4.9.4",
     "wally-sdk": "^0.0.9"
   }
 }
