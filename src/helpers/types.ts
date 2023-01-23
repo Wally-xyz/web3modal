@@ -58,7 +58,7 @@ export interface IProviderUserOptions {
   name: string;
   logo: string;
   description: string;
-  onClick: () => Promise<void>;
+  onClick: (arg0?: any) => Promise<void>;
 }
 
 export type SimpleFunction = (input?: any) => void;

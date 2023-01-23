@@ -179,10 +179,6 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     const { onClose, lightboxOpacity, userOptions, themeColors } = this.props;
 
-    const wallyProvider = userOptions.filter(
-      provider => provider.name === "custom-wally"
-    )[0];
-    console.log(wallyProvider);
     console.log(userOptions);
 
     return (
@@ -202,22 +198,25 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             maxWidth={userOptions.length < 3 ? 500 : 800}
             ref={c => (this.mainModalCard = c)}
           >
-            <WallyProvider
-              name="Wally"
-              logo=""
-              description="Sign in or sign up with email"
-              themeColors={themeColors}
-              onClick={() => {}}
-            />
             {userOptions.map(provider =>
               !!provider ? (
-                <Provider
-                  name={provider.name}
-                  logo={provider.logo}
-                  description={provider.description}
-                  themeColors={themeColors}
-                  onClick={provider.onClick}
-                />
+                (provider.id === 'wally') ? (
+                  <WallyProvider
+                    name={provider.name}
+                    logo={provider.logo}
+                    description={provider.description}
+                    themeColors={themeColors}
+                    onClick={provider.onClick}
+                  />
+                ) : (
+                  <Provider
+                    name={provider.name}
+                    logo={provider.logo}
+                    description={provider.description}
+                    themeColors={themeColors}
+                    onClick={provider.onClick}
+                  />
+                )
               ) : null
             )}
           </SModalCard>

@@ -9,7 +9,8 @@ export interface IWallyConnectorOptions extends IAbstractConnectorOptions {
 
 const ConnectToWally = async (
   WallyConnector: any,
-  opts: IWallyConnectorOptions
+  opts: IWallyConnectorOptions,
+  email: string
 ) => {
   const provider = new WallyConnector({
     clientId: opts.clientId,
@@ -21,6 +22,9 @@ const ConnectToWally = async (
   if (provider.isRedirected()) {
     await provider.handleRedirect();
   }
+
+  // Commented out because this crashes the system for some reason
+  // await provider.login(email);
 
   return provider;
 };

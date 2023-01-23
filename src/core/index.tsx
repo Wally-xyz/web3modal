@@ -18,6 +18,7 @@ import {
 import { themesList } from "../themes";
 import { Modal } from "../components";
 import { EventController, ProviderController } from "../controllers";
+import WallyConnector from "wally-sdk/dist/wally-connector";
 
 const INITIAL_STATE = { show: false };
 
@@ -50,7 +51,16 @@ export class Core {
     this.providerController = new ProviderController({
       disableInjectedProvider: options.disableInjectedProvider,
       cacheProvider: options.cacheProvider,
-      providerOptions: options.providerOptions,
+      providerOptions: {
+        wally: {
+          package: WallyConnector, // required
+          options: {
+            clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
+            verbose: true
+          }
+        },
+        ...options.providerOptions
+      },
       network: options.network
     });
 

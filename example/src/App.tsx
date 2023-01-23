@@ -10,8 +10,6 @@ import WalletConnect from "@walletconnect/web3-provider";
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
 import { Web3Auth } from "@web3auth/web3auth";
-// @ts-ignore
-import WallyConnector from "wally-sdk/dist/wally-connector";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -251,13 +249,6 @@ class App extends React.Component<any, any> {
         package: Web3Auth,
         options: {
           infuraId
-        }
-      },
-      wally: {
-        package: WallyConnector, // required
-        options: {
-          clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
-          verbose: true
         }
       }
     };

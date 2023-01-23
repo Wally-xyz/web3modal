@@ -80,11 +80,6 @@ const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
   cursor: pointer;
   border-radius: 0;
   border: ${({ themeColors }) => `1px solid ${themeColors.border}`};
-  @media (hover: hover) {
-    &:hover ${SProviderContainer} {
-      background-color: ${({ themeColors }) => themeColors.hover};
-    }
-  }
 `;
 
 const Input = styled.input`
@@ -102,7 +97,7 @@ const Input = styled.input`
   }
 `;
 
-const Submit = styled.button`
+const Submit = styled.button<IStyedThemeColorOptions>`
   background: var(--color-wally-blue);
   border: 1px solid #D3D3D3;
   border-radius: 8px;
@@ -115,6 +110,11 @@ const Submit = styled.button`
   line-height: 16px;
   padding: 12px 24px;
   transition: transform 0.15s, opacity 0.15s;
+  @media (hover: hover) {
+    &:hover ${SProviderContainer} {
+      background-color: ${({ themeColors }) => themeColors.hover};
+    }
+  }
 `;
 
 interface IProviderProps {
@@ -164,7 +164,7 @@ export function WallyProvider(props: IProviderProps) {
             setEmail(e.currentTarget.value)
           }
         />
-        <Submit disabled={!email} onClick={onClick}>Submit</Submit>
+        <Submit themeColors={themeColors} disabled={!email} onClick={onClick}>Submit</Submit>
       </SProviderContainer>
     </SProviderWrapper>
   );

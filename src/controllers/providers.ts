@@ -23,7 +23,6 @@ import {
   findMatchingRequiredOptions
 } from "../helpers";
 import { EventController } from "./events";
-import WallyConnector from "wally-sdk";
 
 export class ProviderController {
   public cachedProvider: string = "";
@@ -41,16 +40,7 @@ export class ProviderController {
 
     this.disableInjectedProvider = opts.disableInjectedProvider;
     this.shouldCacheProvider = opts.cacheProvider;
-    this.providerOptions = {
-      ...opts.providerOptions,
-      "custom-wally": {
-        package: WallyConnector, // required
-        options: {
-          clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
-          verbose: true
-        }
-      }
-    };
+    this.providerOptions = opts.providerOptions;
     this.network = opts.network;
 
     this.injectedProvider = getInjectedProvider();
@@ -138,7 +128,7 @@ export class ProviderController {
       !!this.injectedProvider && !this.disableInjectedProvider;
     const onlyInjected = displayInjected && mobile;
 
-    const providerList = [];
+    const providerList = ['wally'];
 
     if (onlyInjected) {
       providerList.push(INJECTED_PROVIDER_ID);
@@ -148,7 +138,7 @@ export class ProviderController {
       }
 
       defaultProviderList.forEach((id: string) => {
-        if (id !== INJECTED_PROVIDER_ID) {
+        if (id !== INJECTED_PROVIDER_ID && id !== 'wally') {
           const result = this.shouldDisplayProvider(id);
           if (result) {
             providerList.push(id);
@@ -163,13 +153,23 @@ export class ProviderController {
       let provider = this.getProvider(id);
       if (typeof provider !== "undefined") {
         const { id, name, logo, connector } = provider;
-        userOptions.push({
-          id,
-          name,
-          logo,
-          description: getProviderDescription(provider),
-          onClick: () => this.connectTo(id, connector)
-        });
+        if (id === 'wally') {
+          userOptions.push({
+            id,
+            name,
+            logo,
+            description: getProviderDescription(provider),
+            onClick: (email) => this.wallyConnectTo(id, connector, email)
+          });
+        } else {
+          userOptions.push({
+            id,
+            name,
+            logo,
+            description: getProviderDescription(provider),
+            onClick: () => this.connectTo(id, connector)
+          });
+        }
       }
     });
 
@@ -212,6 +212,26 @@ export class ProviderController {
       const providerOptions = this.getProviderOption(id, "options");
       const opts = { network: this.network || undefined, ...providerOptions };
       const provider = await connector(providerPackage, opts);
+      this.eventController.trigger(CONNECT_EVENT, provider);
+      if (this.shouldCacheProvider && this.cachedProvider !== id) {
+        this.setCachedProvider(id);
+      }
+    } catch (error) {
+      this.eventController.trigger(ERROR_EVENT, error);
+    }
+  };
+
+  public wallyConnectTo = async (
+    id: string,
+    connector: (providerPackage: any, opts: any, email: string) => Promise<any>,
+    email: string
+  ) => {
+    try {
+      this.eventController.trigger(SELECT_EVENT, id);
+      const providerPackage = this.getProviderOption(id, "package");
+      const providerOptions = this.getProviderOption(id, "options");
+      const opts = { network: this.network || undefined, ...providerOptions };
+      const provider = await connector(providerPackage, opts, email);
       this.eventController.trigger(CONNECT_EVENT, provider);
       if (this.shouldCacheProvider && this.cachedProvider !== id) {
         this.setCachedProvider(id);
