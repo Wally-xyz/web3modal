@@ -23,8 +23,9 @@ const ConnectToWally = async (
     await provider.handleRedirect();
   }
 
-  // Commented out because this crashes the system for some reason
-  // await provider.login(email);
+  // Currently this fails to redirect the user back after logging in
+  await provider.login(email);
+  console.log("Email", email);
 
   return provider;
 };

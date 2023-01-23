@@ -122,7 +122,7 @@ interface IProviderProps {
   logo: string;
   description: string;
   themeColors: ThemeColors;
-  onClick: () => void;
+  onClick: (arg0: string) => void;
 }
 
 export function WallyProvider(props: IProviderProps) {
@@ -164,7 +164,7 @@ export function WallyProvider(props: IProviderProps) {
             setEmail(e.currentTarget.value)
           }
         />
-        <Submit themeColors={themeColors} disabled={!email} onClick={onClick}>Submit</Submit>
+        <Submit themeColors={themeColors} disabled={!email} onClick={() => onClick(email)}>Submit</Submit>
       </SProviderContainer>
     </SProviderWrapper>
   );
