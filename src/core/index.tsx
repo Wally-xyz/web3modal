@@ -18,7 +18,7 @@ import {
 import { themesList } from "../themes";
 import { Modal } from "../components";
 import { EventController, ProviderController } from "../controllers";
-import WallyConnector from "wally-sdk/dist/wally-connector";
+import WallyJS from "wally-sdk/dist/wally-js";
 
 const INITIAL_STATE = { show: false };
 
@@ -53,7 +53,7 @@ export class Core {
       cacheProvider: options.cacheProvider,
       providerOptions: {
         wally: {
-          package: WallyConnector, // required
+          package: WallyJS, // required
           options: {
             clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
             verbose: true
