@@ -5,55 +5,12 @@ import { ThemeColors } from "../helpers";
 import {
   PROVIDER_WRAPPER_CLASSNAME,
   PROVIDER_CONTAINER_CLASSNAME,
-  PROVIDER_ICON_CLASSNAME,
-  PROVIDER_NAME_CLASSNAME,
-  PROVIDER_DESCRIPTION_CLASSNAME
 } from "../constants";
 
-const SIcon = styled.div`
-  width: 45px;
-  height: 45px;
-  display: flex;
-  border-radius: 50%;
-  overflow: visible;
-  box-shadow: none;
-  justify-content: center;
-  align-items: center;
-  & img {
-    width: 100%;
-    height: 100%;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 8.5vw;
-    height: 8.5vw;
-  }
-`;
-
 interface IStyedThemeColorOptions {
+  maxWidth?: number;
   themeColors: ThemeColors;
 }
-
-const SName = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 24px;
-  font-weight: 700;
-  margin-top: 0.5em;
-  color: ${({ themeColors }) => themeColors.main};
-  @media screen and (max-width: 768px) {
-    font-size: 5vw;
-  }
-`;
-
-const SDescription = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 18px;
-  margin: 0.333em 0;
-  color: ${({ themeColors }) => themeColors.secondary};
-  @media screen and (max-width: 768px) {
-    font-size: 4vw;
-  }
-`;
 
 const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   transition: background-color 0.2s ease-in-out;
@@ -63,32 +20,33 @@ const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   justify-content: center;
   align-items: center;
   background-color: ${({ themeColors }) => themeColors.background};
-  border-radius: 12px;
+  max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "800px")};
   padding: 24px 16px;
+  pointer-events: auto;
   @media screen and (max-width: 768px) {
     padding: 1vw;
   }
+  z-index: 3;
 `;
 
 const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
   width: 100%;
-  padding: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  cursor: pointer;
   border-radius: 0;
-  border: ${({ themeColors }) => `1px solid ${themeColors.border}`};
 `;
 
 const Input = styled.input`
   background: transparent;
-  border: 1px solid #D3D3D3;
+  border: 2px solid #ECF1F3;
   border-radius: 8px;
   color: var(--color-text);
   display: block;
-  font-size: 24px;
+  font-size: 14px;
+  height: 48px;
+  padding: 16px;
   outline: none;
   width: 100%;
 
@@ -98,18 +56,20 @@ const Input = styled.input`
 `;
 
 const Submit = styled.button<IStyedThemeColorOptions>`
-  background: var(--color-wally-blue);
+  background: rgb(64,153,255);
   border: 1px solid #D3D3D3;
   border-radius: 8px;
   cursor: pointer;
-  color: var(--color-background);
+  color: white;
   cursor: pointer;
   display: block;
   font-size: 16px;
   font-weight: 700;
   line-height: 16px;
+  margin-top: 8px;
   padding: 12px 24px;
   transition: transform 0.15s, opacity 0.15s;
+  width: 100%;
   @media (hover: hover) {
     &:hover ${SProviderContainer} {
       background-color: ${({ themeColors }) => themeColors.hover};
@@ -145,24 +105,18 @@ export function WallyProvider(props: IProviderProps) {
         themeColors={themeColors}
         className={PROVIDER_CONTAINER_CLASSNAME}
       >
-        <SIcon className={PROVIDER_ICON_CLASSNAME}>
-          <img src={logo} alt={name} />
-        </SIcon>
-        <SName themeColors={themeColors} className={PROVIDER_NAME_CLASSNAME}>
-          {name}
-        </SName>
-        <SDescription
-          themeColors={themeColors}
-          className={PROVIDER_DESCRIPTION_CLASSNAME}
-        >
-          {description}
-        </SDescription>
+        <div>EMAIL</div>
         <Input
           placeholder="name@email.com"
           value={email}
           onChange={(e: React.SyntheticEvent<HTMLInputElement>) =>
             setEmail(e.currentTarget.value)
           }
+          onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            if (e.key === "Enter") {
+              onClick(email);
+            }
+          }}
         />
         <Submit themeColors={themeColors} disabled={!email} onClick={() => onClick(email)}>Submit</Submit>
       </SProviderContainer>

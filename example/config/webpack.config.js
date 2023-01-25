@@ -586,7 +586,7 @@ module.exports = function (webpackEnv) {
           {
             from: path.resolve(
               __dirname,
-              '../node_modules/wally-sdk/dist/worker.js'
+              '../node_modules/web3modal/node_modules/wally-sdk/dist/worker.js'
             ),
             // this location will likely be different for your app
             to: path.resolve(__dirname, '../build/'),

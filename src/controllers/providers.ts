@@ -128,7 +128,7 @@ export class ProviderController {
       !!this.injectedProvider && !this.disableInjectedProvider;
     const onlyInjected = displayInjected && mobile;
 
-    const providerList = ['wally'];
+    const providerList = ["wally"];
 
     if (onlyInjected) {
       providerList.push(INJECTED_PROVIDER_ID);
@@ -138,7 +138,7 @@ export class ProviderController {
       }
 
       defaultProviderList.forEach((id: string) => {
-        if (id !== INJECTED_PROVIDER_ID && id !== 'wally') {
+        if (id !== INJECTED_PROVIDER_ID && id !== "wally") {
           const result = this.shouldDisplayProvider(id);
           if (result) {
             providerList.push(id);
@@ -153,13 +153,13 @@ export class ProviderController {
       let provider = this.getProvider(id);
       if (typeof provider !== "undefined") {
         const { id, name, logo, connector } = provider;
-        if (id === 'wally') {
+        if (id === "wally") {
           userOptions.push({
             id,
             name,
             logo,
             description: getProviderDescription(provider),
-            onClick: (email) => this.wallyConnectTo(id, connector, email)
+            onClick: email => this.wallyConnectTo(id, connector, email)
           });
         } else {
           userOptions.push({
