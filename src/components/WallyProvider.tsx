@@ -82,6 +82,11 @@ const Submit = styled.button`
 const Title = styled.div`
   font-weight: 550;
   margin-bottom: 12px;
+
+  @media screen and (max-width: 768px) {
+    margin-top: 1vw;
+    margin-bottom: 1vw;
+  }
 `;
 
 interface IProviderProps {

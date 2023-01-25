@@ -8,6 +8,7 @@ export interface IProviderControllerOptions {
   cacheProvider: boolean;
   providerOptions: IProviderOptions;
   network: string;
+  wallyClientId?: string;
 }
 
 export interface IAbstractConnectorOptions {

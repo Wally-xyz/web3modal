@@ -28,7 +28,8 @@ const defaultOpts: ICoreOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
   providerOptions: {},
-  network: ""
+  network: "",
+  wallyClientId: ""
 };
 
 export class Core {
@@ -53,9 +54,9 @@ export class Core {
       cacheProvider: options.cacheProvider,
       providerOptions: {
         wally: {
-          package: WallyJS, // required
+          package: WallyJS,
           options: {
-            clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
+            clientId: options.wallyClientId, // required
             verbose: true
           }
         },

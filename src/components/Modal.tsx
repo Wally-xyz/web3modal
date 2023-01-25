@@ -207,7 +207,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             className={MODAL_CARD_CLASSNAME}
             show={show}
             themeColors={themeColors}
-            maxWidth={userOptions.length < 3 ? 500 : 800}
+            maxWidth={800}
             ref={c => (this.mainModalCard = c)}
           >
             {userOptions.map(provider =>
