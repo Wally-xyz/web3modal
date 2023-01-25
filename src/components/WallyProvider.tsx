@@ -27,6 +27,7 @@ const SProviderContainer = styled.div<IStyedThemeColorOptions>`
     padding: 1vw;
   }
   z-index: 3;
+  border-radius: 12px 12px 0px 0px;
 `;
 
 const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
@@ -41,8 +42,8 @@ const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
 const Input = styled.input`
   background: transparent;
   border: 2px solid #ECF1F3;
-  border-radius: 8px;
-  color: var(--color-text);
+  border-radius: 12px;
+  color: black;
   display: block;
   font-size: 14px;
   height: 48px;
@@ -55,10 +56,10 @@ const Input = styled.input`
   }
 `;
 
-const Submit = styled.button<IStyedThemeColorOptions>`
-  background: rgb(64,153,255);
+const Submit = styled.button`
+  background: #0068FF;
   border: 1px solid #D3D3D3;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   color: white;
   cursor: pointer;
@@ -68,13 +69,19 @@ const Submit = styled.button<IStyedThemeColorOptions>`
   line-height: 16px;
   margin-top: 8px;
   padding: 12px 24px;
-  transition: transform 0.15s, opacity 0.15s;
   width: 100%;
+
   @media (hover: hover) {
-    &:hover ${SProviderContainer} {
-      background-color: ${({ themeColors }) => themeColors.hover};
+    &:hover {
+      background-color: #1878ff;
+      transition: 0.15s;
     }
   }
+`;
+
+const Title = styled.div`
+  font-weight: 550;
+  margin-bottom: 12px;
 `;
 
 interface IProviderProps {
@@ -105,7 +112,7 @@ export function WallyProvider(props: IProviderProps) {
         themeColors={themeColors}
         className={PROVIDER_CONTAINER_CLASSNAME}
       >
-        <div>EMAIL</div>
+        <Title>Login or Signup with Email</Title>
         <Input
           placeholder="name@email.com"
           value={email}
@@ -118,7 +125,7 @@ export function WallyProvider(props: IProviderProps) {
             }
           }}
         />
-        <Submit themeColors={themeColors} disabled={!email} onClick={() => onClick(email)}>Submit</Submit>
+        <Submit disabled={!email} onClick={() => onClick(email)}>Submit</Submit>
       </SProviderContainer>
     </SProviderWrapper>
   );

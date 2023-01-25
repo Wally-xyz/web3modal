@@ -95,10 +95,6 @@ interface IModalCardStyleProps {
   maxWidth?: number;
 }
 
-const SProvidersContainer = styled.div`
-  border-radius: 12px;
-  overflow: hidden;
-`;
 
 const SModalCard = styled.div<IModalCardStyleProps>`
   position: relative;
@@ -108,6 +104,7 @@ const SModalCard = styled.div<IModalCardStyleProps>`
   opacity: ${({ show }) => (show ? 1 : 0)};
   visibility: ${({ show }) => (show ? "visible" : "hidden")};
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  border-radius: 0px 0px 12px 12px;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -199,39 +196,36 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <SProvidersContainer>
-            <WallyProvider
-              name={wallyProvider.name}
-              logo={wallyProvider.logo}
-              description={wallyProvider.description}
-              themeColors={themeColors}
-              onClick={wallyProvider.onClick}
-            />
-            <div>OR</div>
-            <SModalCard
-              className={MODAL_CARD_CLASSNAME}
-              show={show}
-              themeColors={themeColors}
-              maxWidth={userOptions.length < 3 ? 500 : 800}
-              ref={c => (this.mainModalCard = c)}
-            >
-              {userOptions.map(provider =>
-                !!provider ? (
-                  provider.id === "wally" ? (
-                    <></>
-                  ) : (
-                    <Provider
-                      name={provider.name}
-                      logo={provider.logo}
-                      description={provider.description}
-                      themeColors={themeColors}
-                      onClick={provider.onClick}
-                    />
-                  )
-                ) : null
-              )}
-            </SModalCard>
-          </SProvidersContainer>
+          <WallyProvider
+            name={wallyProvider.name}
+            logo={wallyProvider.logo}
+            description={wallyProvider.description}
+            themeColors={themeColors}
+            onClick={wallyProvider.onClick}
+          />
+          <SModalCard
+            className={MODAL_CARD_CLASSNAME}
+            show={show}
+            themeColors={themeColors}
+            maxWidth={userOptions.length < 3 ? 500 : 800}
+            ref={c => (this.mainModalCard = c)}
+          >
+            {userOptions.map(provider =>
+              !!provider ? (
+                provider.id === "wally" ? (
+                  <></>
+                ) : (
+                  <Provider
+                    name={provider.name}
+                    logo={provider.logo}
+                    description={provider.description}
+                    themeColors={themeColors}
+                    onClick={provider.onClick}
+                  />
+                )
+              ) : null
+            )}
+          </SModalCard>
         </SModalContainer>
       </SLightbox>
     );
