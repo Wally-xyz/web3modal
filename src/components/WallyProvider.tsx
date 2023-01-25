@@ -125,7 +125,7 @@ export function WallyProvider(props: IProviderProps) {
             }
           }}
         />
-        <Submit disabled={!email} onClick={() => onClick(email)}>Submit</Submit>
+        <Submit onClick={() => onClick(email)}>Submit</Submit>
       </SProviderContainer>
     </SProviderWrapper>
   );
