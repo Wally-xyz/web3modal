@@ -210,19 +210,15 @@ export class Modal extends React.Component<IModalProps, IModalState> {
             maxWidth={800}
             ref={c => (this.mainModalCard = c)}
           >
-            {userOptions.map(provider =>
+            {userOptions.filter(provider => provider.id !== 'wally').map(provider =>
               !!provider ? (
-                provider.id === "wally" ? (
-                  <></>
-                ) : (
-                  <Provider
-                    name={provider.name}
-                    logo={provider.logo}
-                    description={provider.description}
-                    themeColors={themeColors}
-                    onClick={provider.onClick}
-                  />
-                )
+                <Provider
+                  name={provider.name}
+                  logo={provider.logo}
+                  description={provider.description}
+                  themeColors={themeColors}
+                  onClick={provider.onClick}
+                />
               ) : null
             )}
           </SModalCard>
