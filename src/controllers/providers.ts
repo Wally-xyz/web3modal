@@ -159,7 +159,7 @@ export class ProviderController {
             name,
             logo,
             description: getProviderDescription(provider),
-            onClick: email => this.wallyConnectTo(id, connector, email)
+            onClick: email => this.connectToWally(id, connector, email)
           });
         } else {
           userOptions.push({
@@ -221,7 +221,7 @@ export class ProviderController {
     }
   };
 
-  public wallyConnectTo = async (
+  public connectToWally = async (
     id: string,
     connector: (providerPackage: any, opts: any, email: string) => Promise<any>,
     email: string
