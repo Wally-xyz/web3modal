@@ -87,7 +87,9 @@ const SModalContainer = styled.div<IModalContainerStyleProps>`
 
 const SModalInnerContainer = styled.div<IModalThemeStyleProps>`
   background-color: ${({ themeColors }) => themeColors.background};
-  max-widthl: 800px;
+  max-width: 800px;
+  overflow: hidden;
+  border-radius: 16px;
 `;
 
 const SHitbox = styled.div`
