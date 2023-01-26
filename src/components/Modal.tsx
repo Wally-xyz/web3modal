@@ -67,6 +67,10 @@ interface IModalContainerStyleProps {
   show: boolean;
 }
 
+interface IModalThemeStyleProps {
+  themeColors: ThemeColors;
+}
+
 const SModalContainer = styled.div<IModalContainerStyleProps>`
   position: relative;
   width: 100%;
@@ -79,6 +83,11 @@ const SModalContainer = styled.div<IModalContainerStyleProps>`
   opacity: ${({ show }) => (show ? 1 : 0)};
   visibility: ${({ show }) => (show ? "visible" : "hidden")};
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
+`;
+
+const SModalInnerContainer = styled.div<IModalThemeStyleProps>`
+  background-color: ${({ themeColors }) => themeColors.background};
+  max-widthl: 800px;
 `;
 
 const SHitbox = styled.div`
@@ -94,7 +103,6 @@ interface IModalCardStyleProps {
   themeColors: ThemeColors;
   maxWidth?: number;
 }
-
 
 const SModalCard = styled.div<IModalCardStyleProps>`
   position: relative;
@@ -117,6 +125,16 @@ const SModalCard = styled.div<IModalCardStyleProps>`
     max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "500px")};
     grid-template-columns: 1fr;
   }
+`;
+
+const Separator = styled.div`
+  padding: 4px 24px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-align: left;
+  text-transform: uppercase;
+  width: 100%;
 `;
 
 interface IModalProps {
@@ -180,8 +198,6 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     const { onClose, lightboxOpacity, userOptions, themeColors } = this.props;
 
-    console.log(userOptions);
-
     const wallyProvider = userOptions.find(
       provider => provider.id === "wally"
     )!;
@@ -196,32 +212,39 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
-          <WallyProvider
-            name={wallyProvider.name}
-            logo={wallyProvider.logo}
-            description={wallyProvider.description}
-            themeColors={themeColors}
-            onClick={wallyProvider.onClick}
-          />
-          <SModalCard
-            className={MODAL_CARD_CLASSNAME}
-            show={show}
-            themeColors={themeColors}
-            maxWidth={800}
-            ref={c => (this.mainModalCard = c)}
-          >
-            {userOptions.filter(provider => provider.id !== 'wally').map(provider =>
-              !!provider ? (
-                <Provider
-                  name={provider.name}
-                  logo={provider.logo}
-                  description={provider.description}
-                  themeColors={themeColors}
-                  onClick={provider.onClick}
-                />
-              ) : null
-            )}
-          </SModalCard>
+          <SModalInnerContainer themeColors={themeColors}>
+            <WallyProvider
+              name={wallyProvider.name}
+              logo={wallyProvider.logo}
+              description={wallyProvider.description}
+              themeColors={themeColors}
+              onClick={wallyProvider.onClick}
+            />
+            <Separator>
+              <div>Already have a wallet?</div>
+            </Separator>
+            <SModalCard
+              className={MODAL_CARD_CLASSNAME}
+              show={show}
+              themeColors={themeColors}
+              maxWidth={800}
+              ref={c => (this.mainModalCard = c)}
+            >
+              {userOptions
+                .filter(provider => provider.id !== "wally")
+                .map(provider =>
+                  !!provider ? (
+                    <Provider
+                      name={provider.name}
+                      logo={provider.logo}
+                      description={provider.description}
+                      themeColors={themeColors}
+                      onClick={provider.onClick}
+                    />
+                  ) : null
+                )}
+            </SModalCard>
+          </SModalInnerContainer>
         </SModalContainer>
       </SLightbox>
     );

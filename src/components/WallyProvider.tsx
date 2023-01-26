@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { ThemeColors } from "../helpers";
 import {
   PROVIDER_WRAPPER_CLASSNAME,
-  PROVIDER_CONTAINER_CLASSNAME,
+  PROVIDER_CONTAINER_CLASSNAME
 } from "../constants";
 
 interface IStyedThemeColorOptions {
@@ -41,7 +41,7 @@ const SProviderWrapper = styled.div<IStyedThemeColorOptions>`
 
 const Input = styled.input`
   background: transparent;
-  border: 2px solid #ECF1F3;
+  border: 2px solid #ecf1f3;
   border-radius: 12px;
   color: black;
   display: block;
@@ -52,13 +52,12 @@ const Input = styled.input`
   width: 100%;
 
   &::placeholder {
-    color: #D3D3D3;
+    color: #d3d3d3;
   }
 `;
 
 const Submit = styled.button`
-  background: #0068FF;
-  border: 1px solid #D3D3D3;
+  background: #0068ff;
   border-radius: 12px;
   cursor: pointer;
   color: white;
@@ -80,13 +79,32 @@ const Submit = styled.button`
 `;
 
 const Title = styled.div`
-  font-weight: 550;
-  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 800;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  text-align: left;
+  text-transform: uppercase;
+  width: 100%;
 
   @media screen and (max-width: 768px) {
     margin-top: 1vw;
     margin-bottom: 1vw;
   }
+`;
+
+const PoweredBy = styled.div`
+  display: flex;
+  align-items: flex-start;
+  margin-top: 4px;
+  font-weight: 800;
+  font-size: 14px;
+  text-transform: uppercase;
+`;
+
+const WallyLogo = styled.img`
+  height: 20px;
+  margin-left: 4px;
 `;
 
 interface IProviderProps {
@@ -106,7 +124,7 @@ export function WallyProvider(props: IProviderProps) {
     onClick,
     ...otherProps
   } = props;
-  const [email, setEmail] = React.useState('');
+  const [email, setEmail] = React.useState("");
   return (
     <SProviderWrapper
       themeColors={themeColors}
@@ -117,7 +135,7 @@ export function WallyProvider(props: IProviderProps) {
         themeColors={themeColors}
         className={PROVIDER_CONTAINER_CLASSNAME}
       >
-        <Title>Login or Signup with Email</Title>
+        <Title>Enter your email</Title>
         <Input
           placeholder="name@email.com"
           value={email}
@@ -131,6 +149,9 @@ export function WallyProvider(props: IProviderProps) {
           }}
         />
         <Submit onClick={() => onClick(email)}>Submit</Submit>
+        <PoweredBy>
+          Powered by <WallyLogo src={logo} alt="Wally" />
+        </PoweredBy>
       </SProviderContainer>
     </SProviderWrapper>
   );
