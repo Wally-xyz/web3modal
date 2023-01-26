@@ -18,6 +18,7 @@ import {
 import { themesList } from "../themes";
 import { Modal } from "../components";
 import { EventController, ProviderController } from "../controllers";
+import WallyJS from "wally-sdk/dist/wally-js";
 
 const INITIAL_STATE = { show: false };
 
@@ -27,7 +28,8 @@ const defaultOpts: ICoreOptions = {
   cacheProvider: false,
   disableInjectedProvider: false,
   providerOptions: {},
-  network: ""
+  network: "",
+  wallyClientId: ""
 };
 
 export class Core {
@@ -50,7 +52,16 @@ export class Core {
     this.providerController = new ProviderController({
       disableInjectedProvider: options.disableInjectedProvider,
       cacheProvider: options.cacheProvider,
-      providerOptions: options.providerOptions,
+      providerOptions: {
+        wally: {
+          package: WallyJS,
+          options: {
+            clientId: options.wallyClientId, // required
+            verbose: true
+          }
+        },
+        ...options.providerOptions
+      },
       network: options.network
     });
 

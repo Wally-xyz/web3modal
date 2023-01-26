@@ -3,6 +3,7 @@ import * as PropTypes from "prop-types";
 import styled from "styled-components";
 
 import { Provider } from "./Provider";
+import { WallyProvider } from "./WallyProvider";
 import {
   MODAL_LIGHTBOX_CLASSNAME,
   MODAL_CONTAINER_CLASSNAME,
@@ -72,6 +73,7 @@ const SModalContainer = styled.div<IModalContainerStyleProps>`
   height: 100%;
   padding: 15px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   opacity: ${({ show }) => (show ? 1 : 0)};
@@ -93,16 +95,16 @@ interface IModalCardStyleProps {
   maxWidth?: number;
 }
 
+
 const SModalCard = styled.div<IModalCardStyleProps>`
   position: relative;
   width: 100%;
   background-color: ${({ themeColors }) => themeColors.background};
-  border-radius: 12px;
-  margin: 10px;
   padding: 0;
   opacity: ${({ show }) => (show ? 1 : 0)};
   visibility: ${({ show }) => (show ? "visible" : "hidden")};
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
+  border-radius: 0px 0px 12px 12px;
 
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -178,6 +180,12 @@ export class Modal extends React.Component<IModalProps, IModalState> {
 
     const { onClose, lightboxOpacity, userOptions, themeColors } = this.props;
 
+    console.log(userOptions);
+
+    const wallyProvider = userOptions.find(
+      provider => provider.id === "wally"
+    )!;
+
     return (
       <SLightbox
         className={MODAL_LIGHTBOX_CLASSNAME}
@@ -188,14 +196,21 @@ export class Modal extends React.Component<IModalProps, IModalState> {
       >
         <SModalContainer className={MODAL_CONTAINER_CLASSNAME} show={show}>
           <SHitbox className={MODAL_HITBOX_CLASSNAME} onClick={onClose} />
+          <WallyProvider
+            name={wallyProvider.name}
+            logo={wallyProvider.logo}
+            description={wallyProvider.description}
+            themeColors={themeColors}
+            onClick={wallyProvider.onClick}
+          />
           <SModalCard
             className={MODAL_CARD_CLASSNAME}
             show={show}
             themeColors={themeColors}
-            maxWidth={userOptions.length < 3 ? 500 : 800}
+            maxWidth={800}
             ref={c => (this.mainModalCard = c)}
           >
-            {userOptions.map(provider =>
+            {userOptions.filter(provider => provider.id !== 'wally').map(provider =>
               !!provider ? (
                 <Provider
                   name={provider.name}

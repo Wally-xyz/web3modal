@@ -3,18 +3,13 @@ import styled from "styled-components";
 import Web3 from "web3";
 import { convertUtf8ToHex } from "@walletconnect/utils";
 // @ts-ignore
-import Web3Modal from "web3modal";
+import Web3Modal from "wally-web3modal";
 // @ts-ignore
 import WalletConnect from "@walletconnect/web3-provider";
 // @ts-ignore
 import CoinbaseWalletSDK from "@coinbase/wallet-sdk";
 // @ts-ignore
 import { Web3Auth } from "@web3auth/web3auth";
-// @ts-ignore
-import WallyConnector from "wally-sdk/dist/wally-connector";
-import { init, getProvider } from "wally-sdk";
-
-import wallylogo from "./assets/wally.svg";
 
 import Button from "./components/Button";
 import Column from "./components/Column";
@@ -171,7 +166,8 @@ class App extends React.Component<any, any> {
     this.web3Modal = new Web3Modal({
       network: this.getNetwork(),
       cacheProvider: true,
-      providerOptions: this.getProviderOptions()
+      providerOptions: this.getProviderOptions(),
+      wallyClientId: process.env.REACT_APP_WALLY_CLIENT_ID
     });
   }
 
@@ -254,31 +250,6 @@ class App extends React.Component<any, any> {
         package: Web3Auth,
         options: {
           infuraId
-        }
-      },
-      "custom-wallyconnect": {
-        display: {
-          logo: wallylogo,
-          name: "Wally",
-          description: "Sign in with email"
-        },
-        options: {
-          clientId: process.env.REACT_APP_WALLY_CLIENT_ID, // required
-          verbose: true
-        },
-        package: WallyConnector, // required
-        connector: async (
-          ProviderPackage: new (arg0: any) => any,
-          options: any
-        ) => {
-          init({
-            clientId: options.clientId,
-            verbose: options.verbose,
-            redirectURL: window.location.href,
-            sharedWorkerUrl: "/worker.js",
-          });
-          const provider = getProvider();
-          return provider;
         }
       }
     };

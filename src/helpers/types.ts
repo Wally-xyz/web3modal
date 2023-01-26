@@ -8,6 +8,7 @@ export interface IProviderControllerOptions {
   cacheProvider: boolean;
   providerOptions: IProviderOptions;
   network: string;
+  wallyClientId?: string;
 }
 
 export interface IAbstractConnectorOptions {
@@ -58,7 +59,7 @@ export interface IProviderUserOptions {
   name: string;
   logo: string;
   description: string;
-  onClick: () => Promise<void>;
+  onClick: (arg0?: any) => Promise<void>;
 }
 
 export type SimpleFunction = (input?: any) => void;
