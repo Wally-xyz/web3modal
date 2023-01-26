@@ -173,21 +173,28 @@ class App extends React.Component<any, any> {
 
   public componentDidMount() {
     if (this.web3Modal.cachedProvider) {
-      this.onConnect();
+      this.onConnect(true);
     }
   }
 
-  public onConnect = async () => {
+  public onConnect = async (isFromCache?: boolean) => {
     const provider = await this.web3Modal.connect();
 
     await this.subscribeProvider(provider);
 
-    await provider.enable();
+    if (!isFromCache) {
+      await provider.enable();
+    }
     const web3: any = initWeb3(provider);
 
     const accounts = await web3.eth.getAccounts();
 
     const address = accounts[0];
+
+    if (!address) {
+      this.web3Modal.clearCachedProvider();
+      return;
+    }
 
     const networkId = await web3.eth.net.getId();
 
@@ -541,7 +548,7 @@ class App extends React.Component<any, any> {
             ) : (
               <SLanding center>
                 <h3>{`Test Web3Modal`}</h3>
-                <ConnectButton onClick={this.onConnect} />
+                <ConnectButton onClick={() => this.onConnect()} />
               </SLanding>
             )}
           </SContent>
