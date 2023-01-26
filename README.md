@@ -1,6 +1,6 @@
-# Web3Modal
+# Web3Modal Wally Version
 
-A single Web3 / Ethereum provider solution for all Wallets
+A single Web3 / Ethereum provider solution for all Wallets, now with **Wally** integrated right out of the box. Initialize the Web3Modal class with your client id from Wally dashboard, and you're good to go! For full functionality remember to copy wally-sdk/dist/worker.js over to your build folder (you can do this automatically upon build using the copy-webpack-plugin package in your webpack.config.js). 
 
 ## Introduction
 
