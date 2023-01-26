@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Web3 from "web3";
 import { convertUtf8ToHex } from "@walletconnect/utils";
 // @ts-ignore
-import Web3Modal from "web3modal";
+import Web3Modal from "wally-web3modal";
 // @ts-ignore
 import WalletConnect from "@walletconnect/web3-provider";
 // @ts-ignore
