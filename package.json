@@ -1,7 +1,7 @@
 {
-  "name": "web3modal",
-  "version": "1.9.9",
-  "description": "A single Web3 / Ethereum provider solution for all Wallets",
+  "name": "wally-web3modal",
+  "version": "0.0.1",
+  "description": "A single Web3 / Ethereum provider solution for all Wallets with native Wally integration",
   "keywords": [
     "web3",
     "crypto",
@@ -23,7 +23,7 @@
     "ledger",
     "wally"
   ],
-  "author": "Web3Modal <web3modal.com>",
+  "author": "Wally <wally.xyz>",
   "license": "MIT",
   "main": "dist/index.js",
   "unpkg": "dist/index.js",
@@ -36,13 +36,13 @@
   "files": [
     "dist"
   ],
-  "homepage": "https://github.com/web3modal/web3modal",
+  "homepage": "https://github.com/Wally-xyz/web3modal",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/web3modal/web3modal.git"
+    "url": "git+https://github.com/Wally-xyz/web3modal.git"
   },
   "bugs": {
-    "url": "https://github.com/web3modal/web3modal/issues"
+    "url": "https://github.com/Wally-xyz/web3modal/issues"
   },
   "scripts": {
     "prepare": "npm run clean && npm run build",
