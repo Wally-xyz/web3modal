@@ -237,6 +237,7 @@ export class Modal extends React.Component<IModalProps, IModalState> {
                 .map(provider =>
                   !!provider ? (
                     <Provider
+                      key={provider.id}
                       name={provider.name}
                       logo={provider.logo}
                       description={provider.description}
