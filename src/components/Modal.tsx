@@ -90,6 +90,8 @@ const SModalInnerContainer = styled.div<IModalThemeStyleProps>`
   max-width: 800px;
   overflow: hidden;
   border-radius: 16px;
+  z-index: 3;
+  pointer-events: auto;
 `;
 
 const SHitbox = styled.div`
@@ -130,7 +132,7 @@ const SModalCard = styled.div<IModalCardStyleProps>`
 `;
 
 const Separator = styled.div`
-  padding: 4px 24px;
+  padding: 4px 20px;
   font-size: 12px;
   font-weight: 800;
   margin-bottom: 4px;
