@@ -24,7 +24,7 @@ const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   padding: 24px 16px;
   pointer-events: auto;
   @media screen and (max-width: 768px) {
-    padding: 1vw;
+    padding: 8px 16px;
   }
   z-index: 3;
   border-radius: 12px 12px 0px 0px;
@@ -49,7 +49,8 @@ const Input = styled.input`
   height: 48px;
   padding: 16px;
   outline: none;
-  width: 100%;
+  width: 320px;
+  max-width: 100%;
 
   &::placeholder {
     color: #d3d3d3;
@@ -97,7 +98,6 @@ const PoweredBy = styled.div`
   display: flex;
   align-items: flex-start;
   margin-top: 4px;
-  font-weight: 800;
   font-size: 14px;
   text-transform: uppercase;
 `;
