@@ -78,9 +78,9 @@ By default Web3Modal Library supports injected providers like ( **Metamask**,**B
 
 ## Preview
 
-You can test the library on: https://web3modal.com/
+You can test the library on: https://web3modal-eta.vercel.app/
 
-![preview](./images/preview.png)
+![preview](./images/new_preview.png)
 
 ## Projects using `web3modal`
 
