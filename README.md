@@ -1,6 +1,74 @@
 # Web3Modal Wally Version
 
-A single Web3 / Ethereum provider solution for all Wallets, now with **Wally** integrated right out of the box. Initialize the Web3Modal class with your client id from Wally dashboard, and you're good to go! For full functionality remember to copy wally-sdk/dist/worker.js over to your build folder (you can do this automatically upon build using the copy-webpack-plugin package in your webpack.config.js). 
+## Migrate to Wally version
+A single Web3 / Ethereum provider solution for all Wallets, now with **Wally** integrated right out of the box. Upgrading from your existing implementation of web3modal takes 4 simple steps:
+1. `npm uninstall web3modal`
+2. `npm install wally-web3modal`
+3. Copy worker.js into the project - (continue reading for more details)
+4. Set your wallyClientId (available in your [Wally dashboard](https://app.wally.xyz)) when initializing `new Web3Modal()` - (continue reading for more details)
+
+It's that simple!
+
+There are two ways to copy over the worker.js file:
+a. Configuring it with copy-webpack-plugin (more robust)
+b. Adding a new file to where ever you serve static assets from (easier, but will need to updated manually if wally-sdk makes any updates)
+
+3a. Set up with copy-webpack-plug in your webpack.config.js file
+```js
+const path = require('path');
+const CopyPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  // ...
+  webpack: (config) => {
+    config.plugins.push(
+      new CopyPlugin({
+        patterns: [
+          {
+            from: path.resolve(
+              __dirname,
+              'node_modules/wally-sdk/dist/worker.js'
+            ),
+            // this location will likely be different for your app
+            to: path.resolve(__dirname, 'public/'),
+          },
+        ],
+      })
+    );
+    return config;
+  },
+};
+```
+
+3b. If you want to copy this into your static assets folder (usually called `public`)
+```js
+// worker.js
+
+"use strict";
+const _self = self;
+_self.ports = [];
+const broadcast = (e) => {
+    _self.ports.forEach((p) => p.postMessage(e.data));
+};
+_self.onconnect = function (e) {
+    const port = e.ports[0];
+    _self.ports.push(port);
+    port.addEventListener('message', broadcast);
+    port.start();
+};
+```
+
+4. Ensure that you initialized Web3Modal with a Wally Client Id
+```js
+const web3Modal = new Web3Modal({
+  network: "mainnet", // optional
+  cacheProvider: true, // optional
+  providerOptions, // required
+  wallyClientId: "get this from wally dashboard" // required
+});
+```
+
+# Web3Modal standard README
 
 ## Introduction
 
@@ -76,7 +144,8 @@ const providerOptions = {
 const web3Modal = new Web3Modal({
   network: "mainnet", // optional
   cacheProvider: true, // optional
-  providerOptions // required
+  providerOptions, // required
+  wallyClientId: "get this from wally dashboard" // required
 });
 
 const provider = await web3Modal.connect();
@@ -97,7 +166,8 @@ const providerOptions = {
 const web3Modal = new Web3Modal({
   network: "mainnet", // optional
   cacheProvider: true, // optional
-  providerOptions // required
+  providerOptions, // required
+  wallyClientId: "get this from wally dashboard" // required
 });
 
 const instance = await web3Modal.connect();
@@ -159,6 +229,7 @@ const web3Modal = new Web3Modal({
   network: "mainnet", // optional
   cacheProvider: true, // optional
   providerOptions // required
+  wallyClientId: "get this from wally dashboard" // required
 });
 
 const provider = await web3Modal.connect();
