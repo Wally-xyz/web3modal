@@ -7,12 +7,11 @@ import {
   PROVIDER_CONTAINER_CLASSNAME,
   PROVIDER_ICON_CLASSNAME,
   PROVIDER_NAME_CLASSNAME,
-  PROVIDER_DESCRIPTION_CLASSNAME
 } from "../constants";
 
 const SIcon = styled.div`
-  width: 45px;
-  height: 45px;
+  width: 24px;
+  height: 24px;
   display: flex;
   border-radius: 50%;
   overflow: visible;
@@ -35,23 +34,12 @@ interface IStyedThemeColorOptions {
 }
 
 const SName = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 24px;
+  font-size: 16px;
   font-weight: 700;
-  margin-top: 0.5em;
+  margin-left: 8px;
   color: ${({ themeColors }) => themeColors.main};
   @media screen and (max-width: 768px) {
     font-size: 5vw;
-  }
-`;
-
-const SDescription = styled.div<IStyedThemeColorOptions>`
-  width: 100%;
-  font-size: 18px;
-  margin: 0.333em 0;
-  color: ${({ themeColors }) => themeColors.secondary};
-  @media screen and (max-width: 768px) {
-    font-size: 4vw;
   }
 `;
 
@@ -59,12 +47,12 @@ const SProviderContainer = styled.div<IStyedThemeColorOptions>`
   transition: background-color 0.2s ease-in-out;
   width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   background-color: ${({ themeColors }) => themeColors.background};
-  border-radius: 12px;
-  padding: 24px 16px;
+  border-radius: 32px;
+  padding: 8px 8px;
+  border: 1px solid #ecf1f3;
   @media screen and (max-width: 768px) {
     padding: 1vw;
   }
@@ -121,12 +109,6 @@ export function Provider(props: IProviderProps) {
         <SName themeColors={themeColors} className={PROVIDER_NAME_CLASSNAME}>
           {name}
         </SName>
-        <SDescription
-          themeColors={themeColors}
-          className={PROVIDER_DESCRIPTION_CLASSNAME}
-        >
-          {description}
-        </SDescription>
       </SProviderContainer>
     </SProviderWrapper>
   );

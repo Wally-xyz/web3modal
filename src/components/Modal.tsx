@@ -90,6 +90,8 @@ const SModalInnerContainer = styled.div<IModalThemeStyleProps>`
   max-width: 800px;
   overflow: hidden;
   border-radius: 16px;
+  z-index: 3;
+  pointer-events: auto;
 `;
 
 const SHitbox = styled.div`
@@ -116,8 +118,8 @@ const SModalCard = styled.div<IModalCardStyleProps>`
   pointer-events: ${({ show }) => (show ? "auto" : "none")};
   border-radius: 0px 0px 12px 12px;
 
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  display: flex;
+  flex-direction: column;
   max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}px` : "800px")};
   min-width: fit-content;
   max-height: 100%;
@@ -130,13 +132,16 @@ const SModalCard = styled.div<IModalCardStyleProps>`
 `;
 
 const Separator = styled.div`
-  padding: 4px 24px;
+  padding: 4px 20px;
   font-size: 12px;
   font-weight: 800;
-  margin-bottom: 12px;
+  margin-bottom: 4px;
   text-align: left;
   text-transform: uppercase;
   width: 100%;
+  @media screen and (max-width: 768px) {
+    padding: 8px 16px;
+  }
 `;
 
 interface IModalProps {
