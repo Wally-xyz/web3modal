@@ -98,12 +98,12 @@ const PoweredBy = styled.div`
   display: flex;
   align-items: flex-start;
   margin-top: 4px;
-  font-size: 14px;
+  font-size: 10px;
   text-transform: uppercase;
 `;
 
 const WallyLogo = styled.img`
-  height: 20px;
+  height: 14px;
   margin-left: 4px;
 `;
 
