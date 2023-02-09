@@ -1,6 +1,6 @@
 {
   "name": "wally-web3modal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A single Web3 / Ethereum provider solution for all Wallets with native Wally integration",
   "keywords": [
     "web3",

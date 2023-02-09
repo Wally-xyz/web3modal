@@ -118,11 +118,11 @@ _Open a PR to add your project to the list!_
 1. Install Web3Modal NPM package
 
 ```bash
-npm install --save web3modal
+npm install --save wally-web3modal
 
 # OR
 
-yarn add web3modal
+yarn add wally-web3modal
 ```
 
 2. Install Provider packages
@@ -135,7 +135,7 @@ yarn add web3modal
 
 ```js
 import Web3 from "web3";
-import Web3Modal from "web3modal";
+import Web3Modal from "wally-web3modal";
 
 const providerOptions = {
   /* See Provider Options Section */
@@ -157,7 +157,7 @@ const web3 = new Web3(provider);
 
 ```js
 import { ethers } from "ethers";
-import Web3Modal from "web3modal";
+import Web3Modal from "wally-web3modal";
 
 const providerOptions = {
   /* See Provider Options Section */
